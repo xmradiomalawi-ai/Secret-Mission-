@@ -2,40 +2,15 @@
 <html>
 <head>
     <title>Secret Mission</title>
-    <script src="https://api.paychangu.com/js/checkout.js"></script>
 </head>
 <body style="text-align: center; font-family: sans-serif; padding: 50px;">
 
-    <h1>Secret Film</h1>
+    <h1>Secret Mission</h1>
     <p>Coming soon...</p>
 
-    <div id="paychangu-checkout"></div>
-
-    <button type="button" onclick="checkout()" style="background: red; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 18px;">
+    <a href="https://pay.paychangu.com/SC-il8j14" style="display: inline-block; background: red; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 18px;">
         WATCH NOW (MWK 500)
-    </button>
-
-    <script>
-        function checkout() {
-            PaychanguCheckout({
-                public_key: "PUB-6JGpe5mCa4Q2GecNfsST51PbjrPs5UMw",
-                tx_ref: "MS-" + Math.floor((Math.random() * 1000000000) + 1),
-                amount: 500,
-                currency: "MWK",
-                callback_url: "https://film-vault-guard.xmradiomalawi.workers.dev?reference=",
-                return_url: "https://film-vault-guard.xmradiomalawi.workers.dev",
-                customer: {
-                    email: "viewer@secretfilm.com",
-                    first_name: "Film",
-                    last_name: "Fan",
-                },
-                customization: {
-                    title: "Secret Mission",
-                    description: "Payment for Film Access",
-                }
-            });
-        }
-    </script>
+    </a>
 
 </body>
 </html>
