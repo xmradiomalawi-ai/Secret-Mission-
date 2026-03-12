@@ -8,58 +8,75 @@
         body { 
             margin: 0; 
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-            background-color: #000; 
-            color: #fff; 
+            background-color: #ffffff; 
+            color: #111; 
             text-align: center; 
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
         }
         h1 { 
-            font-size: 3rem; 
-            letter-spacing: 4px; 
+            font-size: 2.5rem; 
+            letter-spacing: 6px; 
             margin-bottom: 5px; 
-            color: #fff;
+            color: #000;
+            font-weight: 700;
         }
         .tagline {
-            color: #888;
-            font-size: 1rem;
-            margin-bottom: 50px;
+            color: #999;
+            font-size: 0.8rem;
+            margin-bottom: 40px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
         }
         .container { 
-            max-width: 600px; 
+            max-width: 450px; 
             margin: 0 auto; 
-            padding: 20px; 
+            padding: 40px; 
+        }
+        /* Movie Thumbnail - Using your R2 link */
+        .movie-poster {
+            width: 100%;
+            height: 400px;
+            background-color: #f4f4f4;
+            margin: 0 auto 30px auto;
+            border-radius: 2px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            background-image: url('https://pub-ee2c0439adb34195bad8ead3bc041170.r2.dev/0312.png');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #eee;
         }
         h2 { 
-            font-weight: 300;
+            font-weight: 600;
+            font-size: 1.4rem;
             margin-bottom: 10px;
+            letter-spacing: 1px;
         }
         .price-tag { 
             font-size: 1.1rem; 
-            color: #666; 
-            margin-bottom: 30px; 
+            color: #111; 
+            margin-bottom: 35px; 
         }
         .btn { 
             display: inline-block; 
-            background-color: #E50914; 
-            color: white; 
-            padding: 18px 45px; 
-            text-decoration: none; 
-            border-radius: 4px; 
+            background-color: #000; 
+            color: #fff; 
+            padding: 18px 40px; 
+            border-radius: 0px; 
             font-weight: bold; 
-            font-size: 1rem; 
+            font-size: 0.9rem; 
             transition: 0.3s; 
             border: none;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            width: 100%;
         }
         .btn:hover { 
-            background-color: #ff0f1f; 
+            background-color: #333;
+            letter-spacing: 3px;
         }
     </style>
 </head>
@@ -69,8 +86,10 @@
         <h1>THK STUDIO</h1>
         <p class="tagline">Cinema of the Continent</p>
 
+        <div class="movie-poster"></div>
+
         <h2>"The Modern African"</h2>
-        <p class="price-tag">A Theatrical Film Presentation</p>
+        <p class="price-tag">MWK 100</p>
         
         <form method="POST" action="https://api.paychangu.com/hosted-payment-page">
             <input type="hidden" name="public_key" value="PUB-6JGpe5mCa4Q2GecNfsST51PbjrPs5UMw" />
@@ -78,13 +97,13 @@
             <input type="hidden" name="callback_url" value="https://film-vault-guard.xmradiomalawi.workers.dev" />
             <input type="hidden" name="return_url" value="https://thkstudio.pages.dev" />
             
-            <input type="hidden" name="amount" value="1000" />
+            <input type="hidden" name="amount" value="100" />
             <input type="hidden" name="currency" value="MWK" />
-            <input type="hidden" name="tx_ref" value="thk-modern-african-view" />
+            <input type="hidden" name="tx_ref" value="thk-test-0312" />
             <input type="hidden" name="title" value="The Modern African" />
-            <input type="hidden" name="description" value="Access to THK Studio Premium Content" />
+            <input type="hidden" name="description" value="Streaming Access - THK Studio" />
 
-            <input type="submit" value="Pay 1,000 MWK to Watch" class="btn">
+            <input type="submit" value="Pay & Watch Now" class="btn">
         </form>
     </div>
 
