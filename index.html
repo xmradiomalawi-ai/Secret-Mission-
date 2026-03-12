@@ -5,28 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THK Studio | Premium African Content</title>
     <style>
-        body { margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #000; color: #fff; text-align: center; }
-        .hero { padding: 100px 20px; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514302240736-b1fee5985889?auto=format&fit=crop&q=80'); background-size: cover; }
-        h1 { font-size: 3rem; letter-spacing: 2px; margin-bottom: 10px; }
-        .price-tag { font-size: 1.2rem; color: #ccc; margin-bottom: 30px; }
-        .btn { display: inline-block; background-color: #E50914; color: white; padding: 20px 40px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
-        .btn:hover { background-color: #ff0f1f; transform: scale(1.05); }
+        body { 
+            margin: 0; 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            background-color: #000; 
+            color: #fff; 
+            text-align: center; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 { 
+            font-size: 3rem; 
+            letter-spacing: 4px; 
+            margin-bottom: 5px; 
+            color: #fff;
+        }
+        .tagline {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        h2 { 
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+        .price-tag { 
+            font-size: 1.1rem; 
+            color: #666; 
+            margin-bottom: 30px; 
+        }
+        .btn { 
+            display: inline-block; 
+            background-color: #E50914; 
+            color: white; 
+            padding: 18px 45px; 
+            text-decoration: none; 
+            border-radius: 4px; 
+            font-weight: bold; 
+            font-size: 1rem; 
+            transition: 0.3s; 
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn:hover { 
+            background-color: #ff0f1f; 
+        }
     </style>
 </head>
 <body>
 
-    <div class="hero">
+    <div class="container">
         <h1>THK STUDIO</h1>
-        <p>Streaming the Best in African Theater & Film</p>
-        <br>
-        <div style="max-width: 600px; margin: 0 auto; border: 2px solid #333; padding: 20px; border-radius: 10px; background: rgba(0,0,0,0.8);">
-            <h2>NOW SHOWING: "The Modern African"</h2>
-            <p class="price-tag">Experience the acclaimed theatrical performance.</p>
+        <p class="tagline">Cinema of the Continent</p>
+
+        <h2>"The Modern African"</h2>
+        <p class="price-tag">A Theatrical Film Presentation</p>
+        
+        <form method="POST" action="https://api.paychangu.com/hosted-payment-page">
+            <input type="hidden" name="public_key" value="PUB-6JGpe5mCa4Q2GecNfsST51PbjrPs5UMw" />
             
-            <a href="https://pay.paychangu.com/SC-il8j14?callback_url=https://film-vault-guard.xmradiomalawi.workers.dev" class="btn">
-                WATCH NOW (MWK 1,000)
-            </a>
-        </div>
+            <input type="hidden" name="callback_url" value="https://film-vault-guard.xmradiomalawi.workers.dev" />
+            <input type="hidden" name="return_url" value="https://thkstudio.pages.dev" />
+            
+            <input type="hidden" name="amount" value="1000" />
+            <input type="hidden" name="currency" value="MWK" />
+            <input type="hidden" name="tx_ref" value="thk-modern-african-view" />
+            <input type="hidden" name="title" value="The Modern African" />
+            <input type="hidden" name="description" value="Access to THK Studio Premium Content" />
+
+            <input type="submit" value="Pay 1,000 MWK to Watch" class="btn">
+        </form>
     </div>
 
 </body>
