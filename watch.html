@@ -1,22 +1,58 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>THK Studio | The Modern African</title>
-</head>
-<body style="text-align: center; font-family: sans-serif; background: #000; color: white; padding: 50px;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THK Private Screening</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        /* The Loading Spinner */
+        #loader {
+            border: 5px solid #333;
+            border-top: 5px solid #fff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            z-index: 10;
+        }
 
-    <h1>THK STUDIO PRESENTS</h1>
-    <h2>The Modern African</h2>
-    
-    <video width="100%" height="auto" controls controlsList="nodownload" style="max-width: 900px; border: 2px solid #E50914; box-shadow: 0 0 20px rgba(229, 9, 20, 0.5);">
-        <source src="https://pub-ee2c0439adb34195bad8ead3bc041170.r2.dev/THE%20MODERN%20AFRICAN.mp4" type="video/mp4">
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        video {
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            display: none; /* Hidden until loaded */
+            outline: none;
+        }
+
+        .theatre-text { position: absolute; bottom: 20px; color: #444; font-size: 0.8rem; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div id="loader"></div>
+
+    <video id="cinemaPlayer" controls playsinline preload="auto">
+        <source src="https://pub-ee2c0439adb34195bad8ead3bc041170.r2.dev/0312_the_modern_african.mp4" type="video/mp4">
+        Your browser does not support the video tag.
     </video>
 
-    <br><br>
-    
-    <a href="https://pub-ee2c0439adb34195bad8ead3bc041170.r2.dev/THE%20MODERN%20AFRICAN.mp4" download style="display: inline-block; background: #333; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; border: 1px solid #555;">
-        DOWNLOAD PERFORMANCE
-    </a>
+    <div class="theatre-text">THK STUDIO | EXCLUSIVE ACCESS</div>
 
+    <script>
+        const video = document.getElementById('cinemaPlayer');
+        const loader = document.getElementById('loader');
+
+        // When the video has buffered enough to play...
+        video.oncanplay = function() {
+            loader.style.display = 'none'; // Hide spinner
+            video.style.display = 'block'; // Show video
+            video.play();                  // Try to autoplay
+        };
+    </script>
 </body>
 </html>
