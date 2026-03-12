@@ -33,7 +33,7 @@
         .container { 
             max-width: 600px; 
             margin: 0 auto; 
-            padding: 20px; /* Reduced padding for mobile breathing room */
+            padding: 20px; 
         }
         .movie-poster {
             width: 100%;
@@ -73,10 +73,10 @@
             text-transform: uppercase;
             letter-spacing: 3px;
             width: 100%;
-            -webkit-appearance: none; /* Fixes button styling on iPhones */
+            -webkit-appearance: none;
         }
+        .btn:hover { background-color: #333; }
 
-        /* --- MOBILE OPTIMIZATION --- */
         @media (max-width: 480px) {
             h1 { font-size: 1.6rem; letter-spacing: 4px; }
             .tagline { font-size: 0.6rem; letter-spacing: 3px; margin-bottom: 25px; }
@@ -97,18 +97,29 @@
         <h2>"The Modern African"</h2>
         <p class="price-tag">MWK 100</p>
         
-        <form method="POST" action="https://api.paychangu.com/hosted-payment-page">
+        <form method="POST" action="https://api.paychangu.com/hosted-payment-page" id="paymentForm">
             <input type="hidden" name="public_key" value="PUB-6JGpe5mCa4Q2GecNfsST51PbjrPs5UMw" />
-            <input type="hidden" name="callback_url" value="https://film-vault-guard.xmradiomalawi.workers.dev" />
-            <input type="hidden" name="return_url" value="https://thkstudio.pages.dev" />
             <input type="hidden" name="amount" value="100" />
             <input type="hidden" name="currency" value="MWK" />
-            <input type="hidden" name="tx_ref" value="thk-mobile-test" />
+            
+            <input type="hidden" name="tx_ref" id="tx_ref" value="" />
+            
+            <input type="hidden" name="callback_url" value="https://thkstudio.pages.dev/watch.html" />
+            <input type="hidden" name="return_url" value="https://thkstudio.pages.dev/watch.html" />
+            
+            <input type="hidden" name="first_name" value="Viewer" />
+            <input type="hidden" name="email" value="customer@thkstudio.com" />
             <input type="hidden" name="title" value="The Modern African" />
-            <input type="hidden" name="description" value="Streaming Access - THK Studio" />
-            <input type="submit" value="Pay & Watch Now" class="btn">
+            <input type="hidden" name="description" value="Instant Cinema Access" />
+
+            <input type="submit" value="Pay 100 MWK & Watch" class="btn">
         </form>
     </div>
+
+    <script>
+        // Forces a unique transaction ID so you never see a 500 error for duplicates
+        document.getElementById('tx_ref').value = 'THK-' + Math.floor(Date.now() / 1000);
+    </script>
 
 </body>
 </html>
