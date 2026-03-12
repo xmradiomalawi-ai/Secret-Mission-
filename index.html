@@ -17,32 +17,32 @@
             min-height: 100vh;
         }
         h1 { 
-            font-size: 2.5rem; 
-            letter-spacing: 6px; 
+            font-size: 2.2rem; 
+            letter-spacing: 8px; 
             margin-bottom: 5px; 
             color: #000;
             font-weight: 700;
         }
         .tagline {
             color: #999;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             margin-bottom: 40px;
             text-transform: uppercase;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
         }
         .container { 
-            max-width: 450px; 
+            max-width: 600px; /* Widened to fit the 16:9 image better */
             margin: 0 auto; 
             padding: 40px; 
         }
-        /* Movie Thumbnail - Using your R2 link */
+        /* Cinematic 16:9 Thumbnail Container */
         .movie-poster {
             width: 100%;
-            height: 400px;
+            aspect-ratio: 16 / 9; /* Forces the 1920x1080 shape */
             background-color: #f4f4f4;
             margin: 0 auto 30px auto;
-            border-radius: 2px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             background-image: url('https://pub-ee2c0439adb34195bad8ead3bc041170.r2.dev/0312.png');
             background-size: cover;
             background-position: center;
@@ -50,7 +50,7 @@
         }
         h2 { 
             font-weight: 600;
-            font-size: 1.4rem;
+            font-size: 1.6rem;
             margin-bottom: 10px;
             letter-spacing: 1px;
         }
@@ -58,25 +58,26 @@
             font-size: 1.1rem; 
             color: #111; 
             margin-bottom: 35px; 
+            font-weight: 300;
         }
         .btn { 
             display: inline-block; 
             background-color: #000; 
             color: #fff; 
-            padding: 18px 40px; 
+            padding: 20px 0; 
             border-radius: 0px; 
             font-weight: bold; 
             font-size: 0.9rem; 
-            transition: 0.3s; 
+            transition: 0.4s; 
             border: none;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             width: 100%;
         }
         .btn:hover { 
             background-color: #333;
-            letter-spacing: 3px;
+            letter-spacing: 5px;
         }
     </style>
 </head>
@@ -99,7 +100,7 @@
             
             <input type="hidden" name="amount" value="100" />
             <input type="hidden" name="currency" value="MWK" />
-            <input type="hidden" name="tx_ref" value="thk-test-0312" />
+            <input type="hidden" name="tx_ref" value="thk-test-169" />
             <input type="hidden" name="title" value="The Modern African" />
             <input type="hidden" name="description" value="Streaming Access - THK Studio" />
 
