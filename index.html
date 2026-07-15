@@ -3,78 +3,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THK Studio | The Modern African</title>
+    <title>XM STUDIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { margin: 0; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #ffffff; color: #111; text-align: center; display: flex; flex-direction: column; justify-content: center; min-height: 100vh; }
-        h1 { font-size: 2.2rem; letter-spacing: 8px; margin-bottom: 5px; color: #000; font-weight: 700; text-transform: uppercase; }
-        .tagline { color: #999; font-size: 0.75rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 5px; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%; 
-            height: 0;
-            overflow: hidden;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            background: #000;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
         }
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-
-        h2 { font-weight: 600; font-size: 1.6rem; margin-bottom: 10px; letter-spacing: 1px; }
-        .price-tag { font-size: 1.1rem; color: #111; margin-bottom: 35px; font-weight: 300; }
-        
-        .btn { display: inline-block; background-color: #000; color: #fff; padding: 20px 0; border-radius: 0px; font-weight: bold; font-size: 0.9rem; transition: 0.4s; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 3px; width: 100%; -webkit-appearance: none; text-decoration: none; }
-        .btn:hover { background-color: #333; }
-        
-        @media (max-width: 480px) { 
-            h1 { font-size: 1.6rem; letter-spacing: 4px; } 
-            .tagline { font-size: 0.6rem; letter-spacing: 3px; margin-bottom: 25px; } 
-            .container { padding: 15px; } 
-            h2 { font-size: 1.3rem; } 
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>THK STUDIO</h1>
-        <p class="tagline">Cinema of the Continent</p>
+<body class="min-h-screen flex flex-col justify-between pb-24 selection:bg-red-600 selection:text-white">
 
-        <div class="video-container">
-            <iframe 
-                src="https://www.youtube.com/embed/lMRBslhC2Tk?rel=0" 
-                title="The Modern African Trailer" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
+    <div id="authGate" class="fixed inset-0 bg-[#0d0d0d] z-50 flex flex-col justify-between p-6">
+        <div class="flex flex-col items-center justify-center flex-grow">
+            <div class="text-center mb-10">
+                <h1 class="text-4xl font-extrabold tracking-wider text-red-600">XM STUDIO</h1>
+                <p class="text-xs tracking-widest text-gray-400 mt-2">PREMIUM CINEMA & MUSIC</p>
+            </div>
+
+            <div class="w-full max-w-sm space-y-4">
+                <input id="authEmail" type="email" placeholder="Your Email Address" class="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-red-600 transition duration-200">
+                <input id="authPassword" type="password" placeholder="Passcode / Password" class="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-red-600 transition duration-200">
+                <button onclick="bypassAuth()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition duration-200 uppercase tracking-wider text-sm shadow-lg shadow-red-600/25">Enter Experience</button>
+            </div>
         </div>
-
-        <h2>"The Modern African"</h2>
-        <p class="price-tag">MWK 1,000</p>
-
-        <form method="POST" action="https://api.paychangu.com/hosted-payment-page" id="paymentForm">
-            <input type="hidden" name="public_key" value="PUB-6JGpe5mCa4Q2GecNfsST51PbjrPs5UMw" />
-            <input type="hidden" name="amount" value="1000" />
-            <input type="hidden" name="currency" value="MWK" />
-            <input type="hidden" name="tx_ref" id="tx_ref" value="" />
-            <input type="hidden" name="callback_url" value="https://thkstudio.pages.dev/watch.html" />
-            <input type="hidden" name="return_url" value="https://thkstudio.pages.dev/watch.html" />
-            <input type="hidden" name="first_name" value="Viewer" />
-            <input type="hidden" name="email" value="customer@thkstudio.com" />
-            <input type="hidden" name="title" value="The Modern African" />
-            <input type="submit" value="Pay 1,000 MWK & Download" class="btn">
-        </form>
+        <div class="text-center text-xs text-gray-600">
+            &copy; 2026 XM STUDIO. All rights reserved.
+        </div>
     </div>
 
+    <div id="mainApp" class="hidden">
+        <header class="flex items-center justify-between p-5 border-b border-gray-900 sticky top-0 bg-[#0d0d0d]/90 backdrop-blur-md z-40">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl font-black tracking-wider text-red-600">XM</span>
+                <span class="text-sm font-semibold tracking-widest text-gray-400">STUDIO</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="text-gray-400 hover:text-white"><i class="fa-solid fa-bell text-lg"></i></button>
+                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center font-bold text-sm">XM</div>
+            </div>
+        </header>
+
+        <main class="p-5 max-w-lg mx-auto space-y-8">
+            
+            <section id="cinemaSection">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Featured Release</h2>
+                <div class="bg-[#121212] rounded-2xl overflow-hidden border border-gray-900 shadow-xl">
+                    <div class="relative aspect-video bg-gray-950 flex items-center justify-center overflow-hidden">
+                        <div id="moviePoster" class="absolute inset-0 bg-cover bg-center flex flex-col justify-end p-4" style="background-image: linear-gradient(to top, rgba(13,13,13,0.9), transparent), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1025&auto=format&fit=crop');">
+                            <span class="bg-red-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded w-max mb-1">Exclusive Cinema</span>
+                            <h3 class="text-2xl font-black">Le Du</h3>
+                            <p class="text-xs text-gray-400">Action, Drama &bull; Directed by XM Studio</p>
+                        </div>
+                        
+                        <div id="streamFrameContainer" class="absolute inset-0 bg-black hidden flex-col justify-center items-center">
+                            <iframe id="videoPlayer" class="w-full h-full" src="" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="p-5 space-y-4">
+                        <p class="text-sm text-gray-400 leading-relaxed">
+                            Experience the highly anticipated landmark film from XM Studio. High stakes, stunning choreography, and unforgettable cinema.
+                        </p>
+
+                        <div id="movieGate" class="bg-[#1a1a1a] rounded-xl p-4 border border-gray-800 space-y-3 text-center">
+                            <div class="flex items-center justify-center space-x-2 text-yellow-500 font-semibold text-sm">
+                                <i class="fa-solid fa-lock"></i>
+                                <span>Premium Gateway Access Required</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button onclick="openPaymentGateway('Rent Le Du (48h Access)', 'MWK 1,500')" class="bg-gray-800 hover:bg-gray-700 text-white text-xs font-bold py-3 px-4 rounded-lg transition">
+                                    Rent (48 hrs)<br><span class="text-red-500 text-sm">MWK 1,500</span>
+                                </button>
+                                <button onclick="openPaymentGateway('Buy Le Du (Lifetime Access)', 'MWK 3,500')" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold py-3 px-4 rounded-lg transition">
+                                    Buy Lifetime<br><span class="text-white text-sm">MWK 3,500</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="unlockedGate" class="hidden bg-emerald-950/40 rounded-xl p-4 border border-emerald-800/80 space-y-3 text-center">
+                            <div class="flex items-center justify-center space-x-2 text-emerald-400 font-bold text-sm">
+                                <i class="fa-solid fa-circle-check text-lg"></i>
+                                <span>Access Active & Verified</span>
+                            </div>
+                            <button onclick="launchTheater()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-sm flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>Start Streaming Movie</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="audioSection" class="hidden space-y-4">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-gray-400">Audio releases</h2>
+                
+                <div class="bg-[#121212] hover:bg-[#1a1a1a] border border-gray-900 rounded-xl p-4 flex items-center justify-between cursor-pointer transition" onclick="selectAndPlayTrack('Mtunda', 'XM Studio', 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop', 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3')">
+                    <div class="flex items-center space-x-4">
+                        <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop" class="w-14 h-14 rounded-lg object-cover" alt="Mtunda Art">
+                        <div>
+                            <h3 class="font-bold text-lg text-white">Mtunda</h3>
+                            <p class="text-xs text-gray-500">XM Studio &bull; Premium Track</p>
+                        </div>
+                    </div>
+                    <button class="bg-red-600/20 text-red-500 hover:bg-red-600 hover:text-white w-10 h-10 rounded-full flex items-center justify-center transition">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <div id="audioPlayerBar" class="fixed bottom-20 left-4 right-4 bg-[#121212]/95 backdrop-blur-md border border-gray-800 rounded-2xl p-4 shadow-2xl z-40 hidden flex-col space-y-3 transform translate-y-28 opacity-0 transition-all duration-300">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <img id="playerTrackArt" src="" class="w-12 h-12 rounded-lg object-cover">
+                <div>
+                    <h4 id="playerTrackName" class="font-bold text-sm text-white">Track Title</h4>
+                    <p id="playerTrackArtist" class="text-xs text-gray-500">Artist</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleAudio()" class="bg-white text-black w-9 h-9 rounded-full flex items-center justify-center font-bold">
+                    <i id="playBtnIcon" class="fa-solid fa-play text-sm"></i>
+                </button>
+                <button onclick="closeAudioPlayer()" class="text-gray-500 hover:text-white"><i class="fa-solid fa-times"></i></button>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-2 text-[10px] text-gray-500">
+            <span id="audioCurrentTime">0:00</span>
+            <input type="range" id="audioTimeline" class="flex-grow accent-red-600 bg-gray-800 h-1 rounded-lg cursor-pointer" value="0" min="0" step="1" oninput="seekAudio()">
+            <span id="audioDuration">0:00</span>
+        </div>
+        
+        <audio id="globalAudioNode" class="hidden"></audio>
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex-col justify-end">
+        <div class="bg-[#121212] rounded-t-3xl border-t border-gray-800 p-6 space-y-6 max-w-lg mx-auto w-full transition-all duration-300 transform translate-y-full" id="paymentSheet">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-lg text-white">Payment Checkout</h3>
+                <button onclick="closePaymentGateway()" class="text-gray-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="bg-[#1a1a1a] rounded-xl p-4 border border-gray-800">
+                <p class="text-xs text-gray-500">Selected Option</p>
+                <p id="checkoutItemName" class="font-bold text-white text-md">Le Du (Lifetime)</p>
+                <p id="checkoutItemPrice" class="text-red-500 font-extrabold text-lg mt-1">MWK 3,500</p>
+            </div>
+
+            <div class="space-y-3">
+                <label class="text-xs uppercase tracking-wider text-gray-400 font-bold block">Mobile Money Profile</label>
+                <input id="payPhone" type="tel" placeholder="Phone Number (e.g., 0888...)" class="w-full bg-[#1a1a1a] border border-gray-800 rounded-lg py-3 px-4 text-white focus:outline-none focus:border-red-600 transition duration-200">
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="selectProvider('Airtel')" id="btnAirtel" class="border border-red-900 bg-red-950/20 hover:bg-red-950/40 py-3 rounded-xl flex flex-col items-center justify-center transition">
+                        <span class="text-white text-sm font-black">Airtel Money</span>
+                    </button>
+                    <button onclick="selectProvider('Mpamba')" id="btnMpamba" class="border border-green-900 bg-green-950/20 hover:bg-green-950/40 py-3 rounded-xl flex flex-col items-center justify-center transition">
+                        <span class="text-white text-sm font-black">TNM Mpamba</span>
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="processMockPayment()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg transition uppercase tracking-wider text-sm shadow-lg shadow-red-600/25">
+                Confirm & Pay via Mobile Money
+            </button>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0d0d0d]/95 backdrop-blur-md border-t border-gray-900 py-4 px-8 z-40">
+        <div class="flex items-center justify-around max-w-lg mx-auto">
+            <button onclick="switchTab('store')" id="tabStore" class="flex flex-col items-center space-y-1 text-red-600 font-semibold transition">
+                <i class="fa-solid fa-play text-xl"></i>
+                <span class="text-[10px]">Cinema</span>
+            </button>
+            <button onclick="switchTab('audio')" id="tabAudio" class="flex flex-col items-center space-y-1 text-gray-500 hover:text-white transition">
+                <i class="fa-solid fa-music text-xl"></i>
+                <span class="text-[10px]">Audio</span>
+            </button>
+        </div>
+    </nav>
+
     <script>
-        document.getElementById('tx_ref').value = 'THK-' + Math.floor(Date.now() / 1000);
+        function bypassAuth() {
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+            
+            if (email && pass) {
+                document.getElementById('authGate').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            } else {
+                alert("Please enter both fields to proceed with access.");
+            }
+        }
+
+        function switchTab(tab) {
+            const tabStore = document.getElementById('tabStore');
+            const tabAudio = document.getElementById('tabAudio');
+            const cinemaSection = document.getElementById('cinemaSection');
+            const audioSection = document.getElementById('audioSection');
+
+            if (tab === 'store') {
+                cinemaSection.classList.remove('hidden');
+                audioSection.classList.add('hidden');
+                tabStore.className = "flex flex-col items-center space-y-1 text-red-600 font-semibold transition";
+                tabAudio.className = "flex flex-col items-center space-y-1 text-gray-500 hover:text-white transition";
+            } else {
+                cinemaSection.classList.add('hidden');
+                audioSection.classList.remove('hidden');
+                tabStore.className = "flex flex-col items-center space-y-1 text-gray-500 hover:text-white transition";
+                tabAudio.className = "flex flex-col items-center space-y-1 text-red-600 font-semibold transition";
+            }
+        }
+
+        let currentSelectedProvider = null;
+
+        function openPaymentGateway(itemName, price) {
+            document.getElementById('checkoutItemName').textContent = itemName;
+            document.getElementById('checkoutItemPrice').textContent = price;
+            
+            const modal = document.getElementById('paymentModal');
+            const sheet = document.getElementById('paymentSheet');
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                sheet.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closePaymentGateway() {
+            const modal = document.getElementById('paymentModal');
+            const sheet = document.getElementById('paymentSheet');
+            
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function selectProvider(provider) {
+            currentSelectedProvider = provider;
+            const btnAirtel = document.getElementById('btnAirtel');
+            const btnMpamba = document.getElementById('btnMpamba');
+
+            if (provider === 'Airtel') {
+                btnAirtel.className = "border border-red-600 bg-red-600/30 py-3 rounded-xl flex flex-col items-center justify-center transition";
+                btnMpamba.className = "border border-gray-800 bg-[#1a1a1a] py-3 rounded-xl flex flex-col items-center justify-center transition";
+            } else {
+                btnMpamba.className = "border border-green-600 bg-green-600/30 py-3 rounded-xl flex flex-col items-center justify-center transition";
+                btnAirtel.className = "border border-gray-800 bg-[#1a1a1a] py-3 rounded-xl flex flex-col items-center justify-center transition";
+            }
+        }
+
+        function processMockPayment() {
+            const phoneNumber = document.getElementById('payPhone').value;
+            if (!phoneNumber) {
+                alert("Please insert a valid active mobile money telephone number.");
+                return;
+            }
+            if (!currentSelectedProvider) {
+                alert("Please select a mobile money provider.");
+                return;
+            }
+
+            alert(`Connecting to ${currentSelectedProvider} Core Gateway...`);
+            
+            setTimeout(() => {
+                alert(`Transaction Approved! Access code has been authorized.`);
+                closePaymentGateway();
+                unlockPremiumFeature();
+            }, 1500);
+        }
+
+        function unlockPremiumFeature() {
+            document.getElementById('movieGate').classList.add('hidden');
+            document.getElementById('unlockedGate').classList.remove('hidden');
+        }
+
+        function launchTheater() {
+            document.getElementById('videoPlayer').src = "https://player.vimeo.com/video/505229819?autoplay=1";
+            document.getElementById('moviePoster').classList.add('hidden');
+            document.getElementById('streamFrameContainer').classList.remove('hidden');
+        }
+
+        const globalAudioNode = document.getElementById('globalAudioNode');
+        const audioTimeline = document.getElementById('audioTimeline');
+
+        function selectAndPlayTrack(title, artist, cover, source) {
+            document.getElementById('playerTrackName').textContent = title;
+            document.getElementById('playerTrackArtist').textContent = artist;
+            document.getElementById('playerTrackArt').src = cover;
+
+            globalAudioNode.src = source;
+            globalAudioNode.play();
+
+            document.getElementById('playBtnIcon').className = "fa-solid fa-pause text-sm";
+            
+            const playerBar = document.getElementById('audioPlayerBar');
+            playerBar.classList.remove('hidden');
+            setTimeout(() => {
+                playerBar.className = "fixed bottom-20 left-4 right-4 bg-[#121212]/95 backdrop-blur-md border border-gray-800 rounded-2xl p-4 shadow-2xl z-40 flex flex-col space-y-3 transform translate-y-0 opacity-100 transition-all duration-300";
+            }, 10);
+        }
+
+        function toggleAudio() {
+            if (globalAudioNode.paused) {
+                globalAudioNode.play();
+                document.getElementById('playBtnIcon').className = "fa-solid fa-pause text-sm";
+            } else {
+                globalAudioNode.pause();
+                document.getElementById('playBtnIcon').className = "fa-solid fa-play text-sm";
+            }
+        }
+
+        function closeAudioPlayer() {
+            globalAudioNode.pause();
+            const playerBar = document.getElementById('audioPlayerBar');
+            playerBar.className = "fixed bottom-20 left-4 right-4 bg-[#121212]/95 backdrop-blur-md border border-gray-800 rounded-2xl p-4 shadow-2xl z-40 flex flex-col space-y-3 transform translate-y-28 opacity-0 transition-all duration-300";
+            setTimeout(() => {
+                playerBar.classList.add('hidden');
+            }, 300);
+        }
+
+        globalAudioNode.addEventListener('timeupdate', () => {
+            const current = globalAudioNode.currentTime;
+            const total = globalAudioNode.duration || 0;
+            
+            audioTimeline.max = Math.floor(total);
+            audioTimeline.value = Math.floor(current);
+
+            document.getElementById('audioCurrentTime').textContent = formatSeconds(current);
+            document.getElementById('audioDuration').textContent = formatSeconds(total);
+        });
+
+        function seekAudio() {
+            globalAudioNode.currentTime = audioTimeline.value;
+        }
+
+        function formatSeconds(secs) {
+            const m = Math.floor(secs / 60);
+            const s = Math.floor(secs % 60);
+            return `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
     </script>
 </body>
 </html>
