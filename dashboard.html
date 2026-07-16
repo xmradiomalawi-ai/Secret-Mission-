@@ -6,7 +6,7 @@
     <title>XM STUDIO - PWA Gateway</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.0/dist/umd/supabase.js"></script>
     <script src="https://js.paychangu.com/v1/inline.js"></script>
     
     <link rel="manifest" href="/manifest.json">
@@ -140,25 +140,36 @@
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
         const PAYCHANGU_PUBLIC_KEY = "pub-test-HYSBQpa5K91mmXMHrjhkmC6mAjObPJ2u"; 
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+        let supabase;
         let activeUser = null;
         let selectedMovie = null;
-        let currentAuthMode = 'welcome'; // Views: 'welcome', 'signin', 'signup'
+        let currentAuthMode = 'welcome';
 
         // Initialize state view controller
         async function runInit() {
             setAuthState('welcome'); // Start at welcome state by default
+            
+            // Safe CDN integration loader fallback
+            const supabaseLib = window.supabase || (window.supabaseJS ? window.supabaseJS : null);
+            if (!supabaseLib) {
+                console.error("Critical error: Supabase CDN library is unreachable.");
+                alert("Failed to connect to security portal. Please verify your internet connection.");
+                return;
+            }
+
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session) {
+                // Initialize clean client connection
+                supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (session && !error) {
                     activeUser = session.user;
                     showDashboard();
                 } else {
                     showAuthGate();
                 }
             } catch (err) {
-                console.error("Session check failed, showing welcome portal:", err);
+                console.error("Session configuration failed:", err);
                 showAuthGate();
             }
         }
@@ -178,7 +189,6 @@
             const welcomeDiv = document.getElementById('state-welcome');
             const formsDiv = document.getElementById('state-forms');
             const rewriteContainer = document.getElementById('rewrite-password-container');
-            const primaryBtn = document.getElementById('btn-primary-action');
             const primaryBtnText = document.getElementById('primary-btn-text');
             const toggleBtn = document.getElementById('btn-toggle-view');
 
@@ -205,6 +215,11 @@
 
         // Handles Registration and Login execution
         async function executeAuthSubmit() {
+            if (!supabase) {
+                alert("Network gateway still starting up. Please hold on a second.");
+                return;
+            }
+
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
             const rewritePassword = document.getElementById('auth-rewrite-password').value.trim();
@@ -242,7 +257,7 @@
                         return;
                     }
 
-                    // 2. Immediately login & redirect straight to Dashboard (No manual steps)
+                    // 2. Immediately login & redirect straight to Dashboard
                     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
                         email: email,
                         password: password
@@ -292,7 +307,9 @@
 
         async function logout() {
             try {
-                await supabase.auth.signOut();
+                if (supabase) {
+                    await supabase.auth.signOut();
+                }
             } catch (err) {
                 console.error("Sign out session error:", err);
             }
