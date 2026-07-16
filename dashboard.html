@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://js.paychangu.com/v1/inline.js"></script>
     
-    <!-- PWA Configurations & Updated Branded Icons -->
     <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
@@ -32,39 +31,62 @@
         <div class="w-full max-w-sm flex flex-col items-center justify-between h-[82vh]">
             
             <div class="flex flex-col items-center justify-center flex-grow">
-                <div class="w-44 h-44 bg-black rounded-[40px] flex flex-col items-center justify-center border border-zinc-900 shadow-2xl">
-                    <span class="text-[#FF3E1F] font-black text-4xl tracking-tighter leading-none text-center">XM<br>STUDIO</span>
+                <div class="w-44 h-44 bg-black rounded-[40px] flex flex-col items-center justify-center border border-zinc-900 shadow-2xl overflow-hidden">
+                    <img src="apple-touch-icon.png" alt="XM STUDIO Logo" class="w-full h-full object-cover onerror-fallback" onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.display='block';">
+                    <span id="logo-text-fallback" style="display:none;" class="text-[#FF3E1F] font-black text-4xl tracking-tighter leading-none text-center">XM<br>STUDIO</span>
                 </div>
             </div>
 
-            <div class="w-full space-y-4 pb-8">
+            <div class="w-full pb-8">
                 
-                <div class="space-y-3">
-                    <div id="username-field-container" class="hidden">
-                        <input type="text" id="auth-username" placeholder="Username / Name" 
-                               class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
+                <div id="state-welcome" class="space-y-4">
+                    <button onclick="setAuthState('signin')" class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm transition-all border border-zinc-200">
+                        Sign In
+                    </button>
+                    <button onclick="setAuthState('signup')" class="w-full bg-transparent hover:bg-zinc-900 text-white font-bold py-3.5 px-6 rounded-xl text-sm transition-all border border-zinc-700">
+                        Sign Up
+                    </button>
+                </div>
+
+                <div id="state-forms" class="hidden space-y-4">
+                    <div class="space-y-3">
+                        <div>
+                            <label id="label-email" class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Email</label>
+                            <input type="email" id="auth-email" placeholder="Enter your email" 
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                        </div>
+                        
+                        <div>
+                            <label id="label-password" class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Password</label>
+                            <input type="password" id="auth-password" placeholder="Enter password" 
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                        </div>
+
+                        <div id="rewrite-password-container" class="hidden">
+                            <label class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Rewrite Password</label>
+                            <input type="password" id="auth-rewrite-password" placeholder="Re-enter password" 
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                        </div>
                     </div>
 
-                    <input type="email" id="auth-email" placeholder="Email Address" 
-                           class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
-                    
-                    <input type="password" id="auth-password" placeholder="Password (min 6 chars)" 
-                           class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
+                    <div class="pt-2">
+                        <button onclick="executeAuthSubmit()" id="btn-primary-action" 
+                                class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 border border-zinc-200 transition-all duration-200">
+                            <i id="auth-spinner" class="fa-solid fa-circle-notch animate-spin hidden"></i>
+                            <span id="primary-btn-text">Sign In</span>
+                        </button>
+                    </div>
+
+                    <div class="text-center pt-2 flex flex-col gap-2">
+                        <button onclick="toggleAuthMode()" id="btn-toggle-view" class="text-xs text-zinc-500 hover:text-white transition duration-150 underline decoration-zinc-700 underline-offset-4">
+                            Don't have an account? Sign Up instead
+                        </button>
+                        <button onclick="setAuthState('welcome')" class="text-xs text-zinc-600 hover:text-zinc-400 transition duration-150 flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i> Back to welcome screen
+                        </button>
+                    </div>
                 </div>
 
-                <div class="pt-2">
-                    <button onclick="executeAuthSubmit()" id="btn-primary-action" 
-                            class="w-full transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2">
-                        <i id="auth-spinner" class="fa-solid fa-circle-notch animate-spin hidden"></i>
-                        <span id="primary-btn-text">Sign In</span>
-                    </button>
-                </div>
-
-                <div class="text-center pt-2">
-                    <button onclick="toggleAuthMode()" id="btn-toggle-view" class="text-xs text-zinc-500 hover:text-white transition duration-150 underline decoration-zinc-700 underline-offset-4">
-                        Don't have an account? Sign Up instead
-                    </button>
-                </div>
             </div>
 
         </div>
@@ -122,11 +144,11 @@
 
         let activeUser = null;
         let selectedMovie = null;
-        let currentAuthMode = 'signin'; // Track view state style
+        let currentAuthMode = 'welcome'; // Views: 'welcome', 'signin', 'signup'
 
         // Initialize state view controller
         async function runInit() {
-            updateAuthFormUI(); // Apply the default sign-in layout design rules
+            setAuthState('welcome'); // Start at welcome state by default
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 activeUser = session.user;
@@ -136,44 +158,69 @@
             }
         }
 
-        // Handles view changes based on your 2 sketches
+        // Toggles directly between signin and signup from footer link
         function toggleAuthMode() {
-            currentAuthMode = (currentAuthMode === 'signin') ? 'signup' : 'signin';
-            updateAuthFormUI();
+            if (currentAuthMode === 'signin') {
+                setAuthState('signup');
+            } else {
+                setAuthState('signin');
+            }
         }
 
-        // Dynamically restyle input fields and buttons to perfectly match your sketches
-        function updateAuthFormUI() {
-            const usernameContainer = document.getElementById('username-field-container');
+        // State Machine controller to manage layouts seamlessly
+        function setAuthState(state) {
+            currentAuthMode = state;
+            const welcomeDiv = document.getElementById('state-welcome');
+            const formsDiv = document.getElementById('state-forms');
+            const rewriteContainer = document.getElementById('rewrite-password-container');
             const primaryBtn = document.getElementById('btn-primary-action');
             const primaryBtnText = document.getElementById('primary-btn-text');
             const toggleBtn = document.getElementById('btn-toggle-view');
 
-            if (currentAuthMode === 'signin') {
-                // Layout 1: Sign In Mode (White button, 2 inputs)
-                usernameContainer.classList.add('hidden');
-                primaryBtnText.innerText = "Sign In";
-                primaryBtn.className = "w-full bg-white text-black hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2 border border-zinc-200";
-                toggleBtn.innerText = "Don't have an account? Sign Up instead";
+            if (state === 'welcome') {
+                welcomeDiv.classList.remove('hidden');
+                formsDiv.classList.add('hidden');
             } else {
-                // Layout 2: Sign Up Mode (Red accent button, 3 inputs)
-                usernameContainer.classList.remove('hidden');
-                primaryBtnText.innerText = "Create Account";
-                primaryBtn.className = "w-full bg-[#FF3E1F] text-white hover:bg-red-700 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2";
-                toggleBtn.innerText = "Already have an account? Sign In instead";
+                welcomeDiv.classList.add('hidden');
+                formsDiv.classList.remove('hidden');
+
+                if (state === 'signin') {
+                    // Render Sign In Screen
+                    rewriteContainer.classList.add('hidden');
+                    primaryBtnText.innerText = "Sign In";
+                    primaryBtn.className = "w-full bg-white text-black hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 border border-zinc-200";
+                    toggleBtn.innerText = "Don't have an account? Sign Up instead";
+                } else if (state === 'signup') {
+                    // Render Sign Up Screen
+                    rewriteContainer.classList.remove('hidden');
+                    primaryBtnText.innerText = "Sign Up";
+                    primaryBtn.className = "w-full bg-white text-black hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 border border-zinc-200";
+                    toggleBtn.innerText = "Already have an account? Sign In instead";
+                }
             }
         }
 
-        // Execution Controller tied right to Supabase API endpoints
+        // Execution Controller tied to Supabase API endpoints
         async function executeAuthSubmit() {
             const email = document.getElementById('auth-email').value.trim();
             const password = document.getElementById('auth-password').value.trim();
-            const username = document.getElementById('auth-username').value.trim();
+            const rewritePassword = document.getElementById('auth-rewrite-password').value.trim();
             const spinner = document.getElementById('auth-spinner');
 
             if (!email || !password) {
                 alert("Please fill in your email address and password.");
                 return;
+            }
+
+            if (currentAuthMode === 'signup') {
+                if (password.length < 6) {
+                    alert("Password must be at least 6 characters long.");
+                    return;
+                }
+                if (password !== rewritePassword) {
+                    alert("Passwords do not match. Please verify.");
+                    return;
+                }
             }
 
             spinner.classList.remove('hidden');
@@ -182,10 +229,7 @@
                 // Execute Supabase sign up engine
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
-                    password: password,
-                    options: {
-                        data: { display_name: username || 'New Viewer' }
-                    }
+                    password: password
                 });
                 spinner.classList.add('hidden');
 
@@ -193,8 +237,7 @@
                     alert(`Sign Up error: ${error.message}`);
                 } else {
                     alert("Account setup completed! Proceed to Sign In.");
-                    currentAuthMode = 'signin';
-                    updateAuthFormUI();
+                    setAuthState('signin');
                 }
             } else {
                 // Execute Supabase sign in verification
@@ -226,6 +269,7 @@
             await supabase.auth.signOut();
             activeUser = null;
             showAuthGate();
+            setAuthState('welcome');
         }
 
         async function fetchDashboardContent() {
