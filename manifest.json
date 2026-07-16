@@ -1,0 +1,21 @@
+{
+  "short_name": "XM STUDIO",
+  "name": "XM STUDIO - Stream & Rent",
+  "icons": [
+    {
+      "src": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=192&h=192&fit=crop",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=512&h=512&fit=crop",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0c0c0e",
+  "theme_color": "#dc2626",
+  "display": "standalone",
+  "orientation": "portrait"
+}
