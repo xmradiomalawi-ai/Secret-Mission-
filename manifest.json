@@ -3,12 +3,12 @@
   "name": "XM STUDIO - Stream & Rent",
   "icons": [
     {
-      "src": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=192&h=192&fit=crop",
+      "src": "apple-touch-icon.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=512&h=512&fit=crop",
+      "src": "apple-touch-icon.png",
       "type": "image/png",
       "sizes": "512x512"
     }
