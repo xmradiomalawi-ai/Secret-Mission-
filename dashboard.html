@@ -23,6 +23,16 @@
             color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0c0c0e;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -38,7 +48,6 @@
             </div>
 
             <div class="w-full pb-8">
-                
                 <div id="state-welcome" class="space-y-4">
                     <button onclick="setAuthState('signin')" class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm transition-all border border-zinc-200">
                         Sign In
@@ -86,70 +95,111 @@
                         </button>
                     </div>
                 </div>
-
             </div>
 
         </div>
     </div>
 
-    <div id="main-dashboard" class="hidden flex-grow flex flex-col">
-        <header class="sticky top-0 z-40 bg-[#0c0c0e] bg-opacity-95 px-4 md:px-12 py-4 flex items-center justify-between border-b border-zinc-900">
-            <span class="text-[#FF3E1F] font-black text-2xl tracking-wider">XM STUDIO</span>
-            
-            <div class="flex items-center gap-4">
-                <span id="user-display" class="text-zinc-500 text-xs hidden md:inline font-mono"></span>
-                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-power-off"></i> Sign Out
-                </button>
+    <div id="main-dashboard" class="hidden flex-grow flex flex-col min-h-screen pb-24 bg-[#0c0c0e]">
+        <header class="sticky top-0 z-40 bg-[#0c0c0e] px-6 py-4 flex items-center justify-between border-b border-zinc-900">
+            <span class="text-[#FF3E1F] font-black text-xl tracking-wider">XM STUDIO</span>
+            <div class="flex items-center gap-2">
+                <span id="user-display" class="text-zinc-500 text-[10px] font-mono hidden md:inline"></span>
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             </div>
         </header>
 
-        <section class="relative h-[45vh] md:h-[60vh] w-full flex items-end bg-gradient-to-t from-[#0c0c0e] via-transparent to-black">
-            <img id="hero-img" src="" alt="Hero Movie Background" class="absolute inset-0 w-full h-full object-cover -z-10 opacity-50">
-            
-            <div class="px-4 md:px-12 pb-8 max-w-2xl">
-                <span class="text-[#FF3E1F] font-bold tracking-widest text-xs uppercase"><i class="fa-solid fa-star mr-1"></i> Global Showcase</span>
-                <h1 id="hero-title" class="text-3xl md:text-5xl font-black mt-2 leading-none">Loading...</h1>
-                <p id="hero-desc" class="text-zinc-400 text-xs md:text-sm mt-3 line-clamp-3">Loading details...</p>
-                
-                <div class="flex gap-3 mt-6" id="hero-purchase-actions">
-                    <button id="btn-rent" class="bg-white text-black hover:bg-zinc-200 font-bold px-5 py-3 rounded-lg flex items-center gap-2 text-xs transition"></button>
-                    <button id="btn-buy" class="bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-5 py-3 rounded-lg flex items-center gap-2 text-xs transition border border-zinc-800"></button>
+        <main id="view-home" class="px-6 py-6 flex-grow overflow-y-auto custom-scroll">
+            <div id="movie-catalog" class="grid grid-cols-2 gap-x-6 gap-y-8 max-w-md mx-auto">
+                <div class="animate-pulse flex flex-col space-y-3">
+                    <div class="aspect-square bg-zinc-900 rounded-2xl"></div>
+                    <div class="h-4 bg-zinc-900 rounded w-2/3"></div>
                 </div>
-                <button id="btn-watch-now" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3.5 rounded-lg flex items-center gap-2 text-sm shadow-lg transition">
-                    <i class="fa-solid fa-play"></i> Watch Movie Now
-                </button>
+                <div class="animate-pulse flex flex-col space-y-3">
+                    <div class="aspect-square bg-zinc-900 rounded-2xl"></div>
+                    <div class="h-4 bg-zinc-900 rounded w-1/2"></div>
+                </div>
             </div>
-        </section>
-
-        <main class="px-4 md:px-12 py-8 flex-grow">
-            <h2 class="text-lg font-bold text-zinc-300 mb-6 flex items-center gap-2">
-                <span class="w-1 h-5 bg-[#FF3E1F] rounded"></span> Showcase Catalog
-            </h2>
-            <div id="movie-catalog" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
         </main>
 
-        <footer class="border-t border-zinc-900 py-4 text-center text-zinc-600 text-[10px]">
-            <p>&copy; 2026 XM Studio. Independent, Mobile-First PWA.</p>
-        </footer>
+        <main id="view-search" class="hidden px-6 py-6 flex-grow max-w-md mx-auto w-full">
+            <h2 class="text-xl font-bold text-white mb-4">Search Catalog</h2>
+            <div class="relative mb-6">
+                <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search songs, movies, or creators..." 
+                       class="w-full bg-zinc-900 border border-zinc-800 text-white py-3 pl-11 pr-4 rounded-xl placeholder-zinc-500 focus:outline-none focus:border-[#FF3E1F] text-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-zinc-500 text-sm"></i>
+            </div>
+            <div id="search-results" class="grid grid-cols-2 gap-x-6 gap-y-8">
+                <p class="text-zinc-500 text-xs col-span-2 text-center py-8">Type to begin searching...</p>
+            </div>
+        </main>
+
+        <main id="view-profile" class="hidden px-6 py-6 flex-grow max-w-md mx-auto w-full flex flex-col justify-between">
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white mb-4">Profile Portal</h2>
+                    <div class="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-[#FF3E1F] font-bold">
+                            <i class="fa-solid fa-user text-lg"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-zinc-500 font-medium">Logged in as</p>
+                            <p id="profile-email-display" class="text-xs font-semibold text-white break-all">user@domain.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-sm font-bold text-zinc-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-film text-[#FF3E1F]"></i> Your Library (Purchased)
+                    </h3>
+                    <div id="user-library-container" class="grid grid-cols-2 gap-4">
+                        <p class="text-zinc-600 text-xs col-span-2">No purchased titles found.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8">
+                <button onclick="logout()" class="w-full bg-zinc-950 hover:bg-zinc-900 text-[#FF3E1F] font-bold py-3.5 rounded-xl border border-zinc-900 text-xs transition uppercase tracking-wider">
+                    <i class="fa-solid fa-power-off mr-2"></i> Log Out
+                </button>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 left-0 right-0 bg-[#0c0c0e] border-t border-zinc-900 py-4 px-8 z-40 flex justify-center items-center">
+            <div class="flex items-center justify-between w-full max-w-sm gap-2">
+                
+                <button id="nav-btn-home" onclick="switchDashboardTab('home')" 
+                        class="flex-1 py-2 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150">
+                    <i class="fa-solid fa-house text-lg"></i>
+                </button>
+
+                <button id="nav-btn-profile" onclick="switchDashboardTab('profile')" 
+                        class="flex-1 py-2 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150">
+                    <i class="fa-solid fa-user text-lg"></i>
+                </button>
+
+                <button id="nav-btn-search" onclick="switchDashboardTab('search')" 
+                        class="flex-1 py-2 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+                
+            </div>
+        </nav>
     </div>
 
     <script>
-        // Production API Constants
         const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
-        const PAYCHANGU_PUBLIC_KEY = "pub-test-HYSBQpa5K91mmXMHrjhkmC6mAjObPJ2u"; 
 
         let supabase;
         let activeUser = null;
-        let selectedMovie = null;
+        let cachedMovies = [];
         let currentAuthMode = 'welcome';
 
-        // Initialize state view controller
         async function runInit() {
-            setAuthState('welcome'); // Start at welcome state by default
+            setAuthState('welcome');
             
-            // Safe CDN integration loader fallback
             const supabaseLib = window.supabase || (window.supabaseJS ? window.supabaseJS : null);
             if (!supabaseLib) {
                 console.error("Critical error: Supabase CDN library is unreachable.");
@@ -158,7 +208,6 @@
             }
 
             try {
-                // Initialize clean client connection
                 supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
                 const { data: { session }, error } = await supabase.auth.getSession();
@@ -174,7 +223,6 @@
             }
         }
 
-        // Toggles directly between signin and signup views
         function toggleAuthMode() {
             if (currentAuthMode === 'signin') {
                 setAuthState('signup');
@@ -183,7 +231,6 @@
             }
         }
 
-        // State Machine layout manager
         function setAuthState(state) {
             currentAuthMode = state;
             const welcomeDiv = document.getElementById('state-welcome');
@@ -200,12 +247,10 @@
                 formsDiv.classList.remove('hidden');
 
                 if (state === 'signin') {
-                    // Sign In Page (Email + Password only)
                     rewriteContainer.classList.add('hidden');
                     primaryBtnText.innerText = "Sign In";
                     toggleBtn.innerText = "Don't have an account? Sign Up instead";
                 } else if (state === 'signup') {
-                    // Sign Up Page (Email + Password + Rewrite Password)
                     rewriteContainer.classList.remove('hidden');
                     primaryBtnText.innerText = "Sign Up";
                     toggleBtn.innerText = "Already have an account? Sign In instead";
@@ -213,7 +258,6 @@
             }
         }
 
-        // Handles Registration and Login execution
         async function executeAuthSubmit() {
             if (!supabase) {
                 alert("Network gateway still starting up. Please hold on a second.");
@@ -245,7 +289,6 @@
 
             try {
                 if (currentAuthMode === 'signup') {
-                    // 1. Sign Up User with Supabase Auth
                     const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                         email: email,
                         password: password
@@ -257,7 +300,6 @@
                         return;
                     }
 
-                    // 2. Immediately login & redirect straight to Dashboard
                     const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
                         email: email,
                         password: password
@@ -266,7 +308,6 @@
                     spinner.classList.add('hidden');
 
                     if (signInError) {
-                        // Fallback transition if auto-signin has a restriction
                         alert("Account created successfully! Please sign in.");
                         setAuthState('signin');
                     } else {
@@ -275,7 +316,6 @@
                     }
 
                 } else {
-                    // Classic Sign In Execution
                     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                     spinner.classList.add('hidden');
 
@@ -302,7 +342,11 @@
             document.getElementById('auth-gate').classList.add('hidden');
             document.getElementById('main-dashboard').classList.remove('hidden');
             document.getElementById('user-display').innerText = activeUser.email;
+            document.getElementById('profile-email-display').innerText = activeUser.email;
+            
+            switchDashboardTab('home');
             fetchDashboardContent();
+            fetchUserLibrary();
         }
 
         async function logout() {
@@ -318,21 +362,111 @@
             setAuthState('welcome');
         }
 
+        // SPA View Controller (Switches views & manages Bottom Navigation Highlight styling)
+        function switchDashboardTab(tabName) {
+            const tabs = ['home', 'profile', 'search'];
+            tabs.forEach(t => {
+                const view = document.getElementById(`view-${t}`);
+                if (view) {
+                    if (t === tabName) {
+                        view.classList.remove('hidden');
+                    } else {
+                        view.classList.add('hidden');
+                    }
+                }
+
+                const btn = document.getElementById(`nav-btn-${t}`);
+                if (btn) {
+                    if (t === tabName) {
+                        // Custom sketch style: Home/Active item gets flat red background fill, white icon.
+                        btn.className = "flex-1 py-2 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150";
+                    } else {
+                        // Standard wireframe style
+                        btn.className = "flex-1 py-2 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150";
+                    }
+                }
+            });
+        }
+
         async function fetchDashboardContent() {
             try {
                 const { data: movies, error } = await supabase.from('movies').select('*');
-                if (error || !movies.length) return;
+                if (error) throw error;
 
-                selectedMovie = movies[0];
-                
-                document.getElementById('hero-title').innerText = selectedMovie.title;
-                document.getElementById('hero-desc').innerText = selectedMovie.description;
-                document.getElementById('hero-img').src = selectedMovie.thumbnail_url;
-                
-                document.getElementById('btn-rent').innerHTML = `<i class="fa-solid fa-clock"></i> Rent MWK ${selectedMovie.rent_price}`;
-                document.getElementById('btn-buy').innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy MWK ${selectedMovie.buy_price}`;
+                cachedMovies = movies || [];
+                renderMovies(cachedMovies, 'movie-catalog');
             } catch (err) {
                 console.error("Error retrieving catalog:", err);
+            }
+        }
+
+        // Optional logic: retrieves user-purchased items if they exist
+        async function fetchUserLibrary() {
+            try {
+                const container = document.getElementById('user-library-container');
+                // Customize this query if your system uses a 'purchases' or 'library' table
+                const { data: library, error } = await supabase.from('movies').select('*').limit(2);
+                
+                if (error || !library || library.length === 0) {
+                    container.innerHTML = `<p class="text-zinc-600 text-xs col-span-2">No purchased items yet.</p>`;
+                    return;
+                }
+
+                container.innerHTML = library.map(movie => {
+                    const img = movie.thumbnail_url ? movie.thumbnail_url : 'apple-touch-icon.png';
+                    return `
+                        <div class="flex flex-col space-y-2 cursor-pointer group" onclick="playMovie('${movie.id}')">
+                            <div class="aspect-square w-full rounded-xl bg-zinc-950 border border-zinc-900 overflow-hidden shadow-md">
+                                <img src="${img}" alt="${movie.title}" class="w-full h-full object-cover">
+                            </div>
+                            <h4 class="text-white text-xs font-bold truncate">${movie.title}</h4>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // Grid renderer (Converts items inside "movies" table to clean album-art columns)
+        function renderMovies(moviesList, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (moviesList.length === 0) {
+                container.innerHTML = `<p class="text-zinc-500 text-xs text-center col-span-2 py-8">No movies found.</p>`;
+                return;
+            }
+
+            container.innerHTML = moviesList.map(movie => {
+                const imageSource = movie.thumbnail_url ? movie.thumbnail_url : 'apple-touch-icon.png';
+                return `
+                    <div class="flex flex-col space-y-3 cursor-pointer group" onclick="playMovie('${movie.id}')">
+                        <div class="aspect-square w-full rounded-2xl bg-zinc-950 border border-zinc-900 overflow-hidden shadow-md group-hover:border-zinc-700 transition">
+                            <img src="${imageSource}" alt="${movie.title}" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <h3 class="text-white text-sm font-bold tracking-tight leading-snug break-words">${movie.title}</h3>
+                            <p class="text-[10px] text-zinc-500 font-medium">${movie.creator_name || 'XM Creator'}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Live, high-performance catalog filter
+        function handleSearch(query) {
+            const filtered = cachedMovies.filter(movie => 
+                movie.title.toLowerCase().includes(query.toLowerCase()) || 
+                (movie.creator_name && movie.creator_name.toLowerCase().includes(query.toLowerCase()))
+            );
+            renderMovies(filtered, 'search-results');
+        }
+
+        function playMovie(id) {
+            const movie = cachedMovies.find(m => m.id === id);
+            if (movie) {
+                alert(`Selected Title: ${movie.title}\nStreaming Source: ${movie.thumbnail_url}`);
             }
         }
 
