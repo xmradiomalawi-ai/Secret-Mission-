@@ -7,9 +7,40 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: black; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        video { width: 100%; height: 100%; object-fit: contain; }
-        .back-btn { position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); color: white; border: 1px solid white; padding: 10px 15px; border-radius: 4px; cursor: pointer; z-index: 10; font-family: sans-serif; text-decoration: none;}
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: black; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+        }
+        video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+        }
+        .back-btn { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            background: rgba(0,0,0,0.6); 
+            color: white; 
+            border: 1px solid white; 
+            padding: 10px 15px; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            z-index: 10; 
+            font-family: sans-serif; 
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
     </style>
 </head>
 <body>
@@ -18,11 +49,15 @@
     <video id="video-player" controls autoplay></video>
 
     <script>
-        const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE"; 
-        const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE"; 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Supabase configuration details
+        const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
+        
+        // Correct initialization sequence using window scope
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         async function verifyAndPlay() {
+            // 1. Get current authenticated user session
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 alert("Unauthorized! Please sign in first.");
@@ -30,18 +65,35 @@
                 return;
             }
 
-            // Fetch the movie
-            const { data: movie } = await supabase.from('movies').select('*').limit(1).single();
-            if (!movie) return;
+            // 2. Fetch the default movie (Secret Agent Fabulous)
+            const { data: movie, error: movieError } = await supabase.from('movies').select('*').limit(1).single();
+            if (movieError || !movie) {
+                console.error("Error retrieving film data:", movieError);
+                alert("Could not load film details. Check database setup.");
+                return;
+            }
 
-            // Confirm active rental or purchase
-            const { data: purchases } = await supabase.from('purchases').select('*').eq('user_id', session.user.id).eq('movie_id', movie.id);
+            // 3. Confirm active rental or lifetime purchase
+            const { data: purchases, error: purchaseError } = await supabase
+                .from('purchases')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .eq('movie_id', movie.id);
+
+            if (purchaseError) {
+                console.error("Error verifying purchase status:", purchaseError);
+                alert("Could not verify purchase status.");
+                return;
+            }
+
+            // Loop through transactions to see if user has valid access
             const hasAccess = purchases?.some(p => {
-                if (p.purchase_type === 'buy') return true;
-                if (p.purchase_type === 'rent') return new Date(p.expires_at) > new Date();
+                if (p.purchase_type === 'buy') return true; // Purchased for life
+                if (p.purchase_type === 'rent') return new Date(p.expires_at) > new Date(); // Rental is still active
                 return false;
             });
 
+            // 4. Play stream or redirect back to Gatekeeper
             if (hasAccess) {
                 startStream(movie.video_url);
             } else {
@@ -52,15 +104,26 @@
 
         function startStream(url) {
             const video = document.getElementById('video-player');
+            
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(url);
                 hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                    video.play().catch(e => console.log("Autoplay blocked, waiting for user interaction:", e));
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // Native Safari / iOS support
                 video.src = url;
+                video.addEventListener('loadedmetadata', function() {
+                    video.play().catch(e => console.log("Autoplay blocked, waiting for user interaction:", e));
+                });
+            } else {
+                alert("HLS playback is not supported on this browser.");
             }
         }
 
+        // Run the verification sequence
         verifyAndPlay();
     </script>
 </body>
