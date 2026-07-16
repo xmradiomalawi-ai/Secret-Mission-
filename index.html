@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fabulous Stream - Gatekeeper</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- PayChangu Inline Popup Library -->
+    <script src="https://in.paychangu.com/js/popup.js"></script>
     
     <style>
         :root {
@@ -114,8 +116,8 @@
             
             <div id="action-area">
                 <div id="gatekeeper-actions" class="btn-group" style="display: none;">
-                    <button class="btn btn-secondary" onclick="alert('Payment integration coming soon!')">Rent for <span id="rent-price">...</span></button>
-                    <button class="btn btn-primary" onclick="alert('Payment integration coming soon!')">Buy for <span id="buy-price">...</span></button>
+                    <button class="btn btn-secondary" onclick="initiatePayment('rent')">Rent for <span id="rent-price">...</span></button>
+                    <button class="btn btn-primary" onclick="initiatePayment('buy')">Buy for <span id="buy-price">...</span></button>
                 </div>
                 <button id="watch-now-btn" class="btn btn-watch" onclick="goToPlayer()">🎬 Watch Movie Now</button>
             </div>
@@ -127,19 +129,26 @@
         const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
         
+        // PAYCHANGU CONFIGURATION: Swap "pub-test-..." with your production key when ready
+        const PAYCHANGU_PUBLIC_KEY = "pub-test-HYSBQpa5K91mmXMHrjhkmC6mAjObPJ2u";
+        const PAYMENT_CURRENCY = "USD"; // Choose either 'USD' or 'MWK' as preferred by your account setups
+
         // Initializing the Supabase client safely
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentMovie = null;
+        let currentUserSession = null;
 
         async function init() {
             await fetchMovie();
-            checkUserSession();
+            await checkUserSession();
+            await handlePaymentCallback(); // Checks if returning from a completed payment
         }
 
         async function checkUserSession() {
             const { data: { session } } = await supabase.auth.getSession();
             const authBtn = document.getElementById('auth-status');
+            currentUserSession = session;
             
             if (session) {
                 authBtn.innerText = "Log Out";
@@ -155,15 +164,22 @@
         async function handleAuth() {
             const email = prompt("Enter email:");
             const password = prompt("Enter password (min 6 chars):");
-            if (!email || !password) return;
+            if (!email || !password) return null;
 
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                const { error: signUpError } = await supabase.auth.signUp({ email, password });
-                if (signUpError) alert(signUpError.message);
-                else { alert("Account created!"); window.location.reload(); }
+                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+                if (signUpError) {
+                    alert(signUpError.message);
+                    return null;
+                } else { 
+                    alert("Account created!"); 
+                    window.location.reload(); 
+                    return signUpData.session;
+                }
             } else {
                 window.location.reload();
+                return data.session;
             }
         }
 
@@ -194,6 +210,99 @@
                 document.getElementById('gatekeeper-actions').style.display = 'none';
             } else {
                 document.getElementById('gatekeeper-actions').style.display = 'flex';
+            }
+        }
+
+        // --- NEW: Initiate PayChangu Checkout ---
+        async function initiatePayment(type) {
+            // Require user to be logged in first
+            if (!currentUserSession) {
+                alert("Please log in or register before completing your purchase!");
+                const activeSession = await handleAuth();
+                if (!activeSession) return;
+            }
+
+            const price = type === 'rent' ? currentMovie.rent_price : currentMovie.buy_price;
+            const txRef = "tx-" + Date.now() + "-" + Math.floor(Math.random() * 1000000);
+
+            // Construct callback URL to point back to index.html with success state query parameters
+            const currentUrl = new URL(window.location.href);
+            currentUrl.searchParams.set('payment_success', 'true');
+            currentUrl.searchParams.set('tx_ref', txRef);
+            
+            // Temporarily store checkout data to local storage so we can insert it into Supabase upon successful return redirect
+            localStorage.setItem('pending_checkout', JSON.stringify({
+                user_id: currentUserSession.user.id,
+                movie_id: currentMovie.id,
+                purchase_type: type,
+                tx_ref: txRef
+            }));
+
+            // Launch PayChangu Checkout popup flow
+            PaychanguCheckout({
+                "public_key": PAYCHANGU_PUBLIC_KEY,
+                "tx_ref": txRef,
+                "amount": Number(price),
+                "currency": PAYMENT_CURRENCY,
+                "email": currentUserSession.user.email || "customer@fabulousstream.com",
+                "first_name": "Customer",
+                "callback_url": currentUrl.toString(),
+                "return_url": window.location.href,
+                "customization": {
+                    "title": `Fabulous Stream: ${currentMovie.title}`,
+                    "description": `${type.toUpperCase()} - ${currentMovie.title}`
+                }
+            });
+        }
+
+        // --- NEW: Handle Returning Successfully from PayChangu ---
+        async function handlePaymentCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isSuccess = urlParams.get('payment_success') === 'true';
+            const txRef = urlParams.get('tx_ref');
+
+            if (isSuccess && txRef) {
+                const storedData = localStorage.getItem('pending_checkout');
+                if (storedData) {
+                    const checkout = JSON.parse(storedData);
+
+                    // Check if this pending transaction matches the URL reference safely
+                    if (checkout.tx_ref === txRef) {
+                        let expiresAt = null;
+                        if (checkout.purchase_type === 'rent') {
+                            // Calculate rent expiration time (e.g. 48 hours from now)
+                            const date = new Date();
+                            date.setHours(date.getHours() + 48);
+                            expiresAt = date.toISOString();
+                        }
+
+                        // Insert the record straight into Supabase database
+                        const { error } = await supabase.from('purchases').insert([{
+                            user_id: checkout.user_id,
+                            movie_id: checkout.movie_id,
+                            purchase_type: checkout.purchase_type,
+                            expires_at: expiresAt,
+                            created_at: new Date().toISOString()
+                        }]);
+
+                        if (error) {
+                            console.error("Error updating purchases:", error.message);
+                            alert("Something went wrong claiming your purchase. Contact support with transaction ref: " + txRef);
+                        } else {
+                            alert(`🎉 Payment Successful! Enjoy watching "${currentMovie?.title || 'your movie'}"!`);
+                            // Remove local cache so we don't repeat the action on simple refreshes
+                            localStorage.removeItem('pending_checkout');
+                            
+                            // Clean up browser URL clean parameters cleanly without refreshing again
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            
+                            // Recheck the UI permission mapping
+                            if (currentUserSession) {
+                                await checkAccess(currentUserSession.user.id);
+                            }
+                        }
+                    }
+                }
             }
         }
 
