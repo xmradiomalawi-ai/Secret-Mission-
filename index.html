@@ -3,266 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XM Studio - Stream & Rent</title>
+    <title>Welcome to XM STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://js.paychangu.com/v1/inline.js"></script>
     
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
+    <meta name="apple-mobile-web-app-title" content="XM STUDIO">
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=180&h=180&fit=crop">
+
     <style>
-        /* Custom styles for Netflix cinematic feel */
         body {
-            background-color: #141414;
+            background-color: #0c0c0e;
             color: #ffffff;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between items-center px-4 py-8 relative">
 
-    <header class="sticky top-0 z-50 bg-[#141414] bg-opacity-95 px-4 md:px-12 py-4 flex items-center justify-between border-b border-zinc-800">
-        <div class="flex items-center gap-2">
-            <span class="text-red-600 font-extrabold text-2xl tracking-wider">XM STUDIO</span>
-        </div>
-        
-        <div id="auth-section" class="flex items-center gap-3">
-            <button id="btn-login" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-1.5 rounded transition">
-                Sign In
-            </button>
-            <div id="user-profile" class="hidden flex items-center gap-3">
-                <span id="user-email" class="text-zinc-400 text-sm hidden md:inline"></span>
-                <button id="btn-logout" class="text-zinc-400 hover:text-white text-sm font-semibold">
-                    Sign Out
-                </button>
-            </div>
-        </div>
+    <header class="w-full max-w-xl flex justify-center py-4">
+        <span class="text-red-600 font-black text-3xl tracking-widest">XM STUDIO</span>
     </header>
 
-    <section class="relative h-[55vh] md:h-[70vh] w-full flex items-end bg-gradient-to-t from-[#141414] via-transparent to-black">
-        <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80" 
-             alt="Hero Film Background" class="absolute inset-0 w-full h-full object-cover -z-10 opacity-60">
-        
-        <div class="px-4 md:px-12 pb-10 max-w-2xl">
-            <span class="text-red-500 font-bold tracking-widest text-xs uppercase"><i class="fa-solid fa-fire mr-1"></i> Featured Release</span>
-            <h1 class="text-4xl md:text-6xl font-black mt-2 leading-none">THE LAST FRONTIER</h1>
-            <p class="text-zinc-300 text-sm md:text-base mt-4 line-clamp-3">
-                An exclusive, ultra-high definition cinematic masterclass exploring the depths of the solar system, captured and produced completely independently.
-            </p>
+    <main class="flex-grow flex flex-col justify-center items-center text-center max-w-md w-full my-auto">
+        <div class="space-y-6">
+            <div class="mx-auto w-24 h-24 bg-gradient-to-tr from-red-600 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-900/30">
+                <i class="fa-solid fa-play text-4xl text-white ml-1"></i>
+            </div>
             
-            <div class="flex flex-wrap gap-3 mt-6">
-                <button onclick="handlePurchase('movie-001', 'rent', 1500)" class="bg-white text-black hover:bg-zinc-200 font-bold px-6 py-3 rounded flex items-center gap-2 text-sm transition">
-                    <i class="fa-solid fa-clock"></i> Rent for MWK 1,500
+            <div class="space-y-2">
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Welcome to <span class="text-red-600">XM STUDIO</span></h1>
+                <p class="text-zinc-400 text-sm md:text-base leading-relaxed">
+                    Install our Progressive Web App (PWA) on your device for full, distraction-free movie streaming and offline cinematic access.
+                </p>
+            </div>
+
+            <div id="cta-container" class="pt-4">
+                <button id="btn-install" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition duration-300 transform active:scale-95 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-download"></i> Install App to Start
                 </button>
-                <button onclick="handlePurchase('movie-001', 'buy', 5000)" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded flex items-center gap-2 text-sm transition border border-zinc-700">
-                    <i class="fa-solid fa-cart-shopping"></i> Buy for MWK 5,000
-                </button>
             </div>
-        </div>
-    </section>
-
-    <main class="px-4 md:px-12 py-10 flex-grow">
-        <h2 class="text-xl md:text-2xl font-bold text-zinc-100 mb-6 flex items-center gap-2">
-            <span class="w-1 h-6 bg-red-600 rounded"></span> Independent Masters Catalog
-        </h2>
-
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            
-            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm md:text-base text-white">Chasing Horizons</h3>
-                        <p class="text-zinc-400 text-xs mt-1">Adventure, Travel</p>
-                    </div>
-                </div>
-                <div class="p-3 border-t border-zinc-800 flex gap-2">
-                    <button onclick="handlePurchase('chasing-horizons', 'rent', 1000)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
-                        Rent <span class="block text-[9px] text-zinc-400">MWK 1K</span>
-                    </button>
-                    <button onclick="handlePurchase('chasing-horizons', 'buy', 3500)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
-                        Buy <span class="block text-[9px] text-red-200">MWK 3.5K</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm md:text-base text-white">Shadow Puppets</h3>
-                        <p class="text-zinc-400 text-xs mt-1">Thriller, Mystery</p>
-                    </div>
-                </div>
-                <div class="p-3 border-t border-zinc-800 flex gap-2">
-                    <button onclick="handlePurchase('shadow-puppets', 'rent', 1200)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
-                        Rent <span class="block text-[9px] text-zinc-400">MWK 1.2K</span>
-                    </button>
-                    <button onclick="handlePurchase('shadow-puppets', 'buy', 4000)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
-                        Buy <span class="block text-[9px] text-red-200">MWK 4K</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm md:text-base text-white">Echoes in Silence</h3>
-                        <p class="text-zinc-400 text-xs mt-1">Sci-Fi, Philosophy</p>
-                    </div>
-                </div>
-                <div class="p-3 border-t border-zinc-800 flex gap-2">
-                    <button onclick="handlePurchase('echoes-in-silence', 'rent', 1500)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
-                        Rent <span class="block text-[9px] text-zinc-400">MWK 1.5K</span>
-                    </button>
-                    <button onclick="handlePurchase('echoes-in-silence', 'buy', 5000)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
-                        Buy <span class="block text-[9px] text-red-200">MWK 5K</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
-                <div>
-                    <img src="https://images.unsplash.com/photo-1500628557201-ac4c37953058?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
-                    <div class="p-3">
-                        <h3 class="font-bold text-sm md:text-base text-white">Neon Whispers</h3>
-                        <p class="text-zinc-400 text-xs mt-1">Cyberpunk, Indie</p>
-                    </div>
-                </div>
-                <div class="p-3 border-t border-zinc-800 flex gap-2">
-                    <button onclick="handlePurchase('neon-whispers', 'rent', 1000)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
-                        Rent <span class="block text-[9px] text-zinc-400">MWK 1K</span>
-                    </button>
-                    <button onclick="handlePurchase('neon-whispers', 'buy', 3500)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
-                        Buy <span class="block text-[9px] text-red-200">MWK 3.5K</span>
-                    </button>
-                </div>
-            </div>
-
         </div>
     </main>
 
-    <footer class="border-t border-zinc-800 py-6 text-center text-zinc-500 text-xs mt-12">
-        <p>&copy; 2026 XM Studio. All Rights Reserved. Built on zero budget.</p>
+    <footer class="text-zinc-600 text-xs text-center mt-8">
+        <p>Zero-Budget Cinematic System &bull; Built to stream natively on your device.</p>
     </footer>
 
-    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6 max-w-md w-full relative">
-            <button id="close-modal" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+    <div id="ios-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-4 hidden">
+        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-sm p-6 space-y-6 shadow-2xl relative mb-4">
+            
+            <button id="close-ios" class="absolute top-4 right-4 text-zinc-500 hover:text-white">
                 <i class="fa-solid fa-xmark text-lg"></i>
             </button>
-            <h2 class="text-xl font-bold text-white mb-4">Sign In to XM Studio</h2>
-            <form id="form-signin" class="space-y-4">
-                <div>
-                    <label class="block text-zinc-400 text-xs font-semibold uppercase mb-1">Email Address</label>
-                    <input type="email" id="signin-email" required class="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-red-600">
+
+            <div class="text-center space-y-2">
+                <h3 class="text-xl font-extrabold text-white">Install on Apple iOS</h3>
+                <p class="text-zinc-400 text-sm">Follow these short steps to add <strong class="text-white">XM STUDIO</strong> to your iPhone or iPad home screen:</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/60">
+                    <span class="w-8 h-8 rounded-full bg-red-950 text-red-500 font-bold flex items-center justify-center shrink-0">1</span>
+                    <p class="text-xs text-zinc-300">
+                        Tap the <strong class="text-white">Share</strong> button at the bottom of Safari: <br>
+                        <span class="text-blue-400 font-semibold"><i class="fa-solid fa-arrow-up-from-bracket text-base mt-1"></i> (Share Icon)</span>
+                    </p>
                 </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded transition text-sm">
-                    Enter Dashboard
-                </button>
-            </form>
+
+                <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/60">
+                    <span class="w-8 h-8 rounded-full bg-red-950 text-red-500 font-bold flex items-center justify-center shrink-0">2</span>
+                    <p class="text-xs text-zinc-300">
+                        Scroll down the options list and select: <br>
+                        <strong class="text-white"><i class="fa-regular fa-square-plus mr-1"></i> Add to Home Screen</strong>
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <span class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase">Once added, open the app from your home screen!</span>
+            </div>
         </div>
     </div>
 
     <script>
-        // Supabase Initialization
-        // REMEMBER TO REPLACE THESE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
-        const SUPABASE_URL = "https://your-supabase-url.supabase.co";
-        const SUPABASE_ANON_KEY = "your-supabase-anon-key";
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let deferredPrompt;
+        const btnInstall = document.getElementById('btn-install');
+        const iosOverlay = document.getElementById('ios-overlay');
+        const closeIos = document.getElementById('close-ios');
 
-        // State Management
-        let currentUser = null;
+        // Helper: Check if already installed & running in Standalone PWA mode
+        const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
 
-        // UI Selectors
-        const authSection = document.getElementById('auth-section');
-        const btnLogin = document.getElementById('btn-login');
-        const loginModal = document.getElementById('login-modal');
-        const closeModal = document.getElementById('close-modal');
-        const formSignin = document.getElementById('form-signin');
-        const userProfile = document.getElementById('user-profile');
-        const userEmail = document.getElementById('user-email');
-        const btnLogout = document.getElementById('btn-logout');
+        // Helper: Detect if user is on iOS / Safari
+        const isIOS = () => {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        };
 
-        // Modal triggers
-        btnLogin.addEventListener('click', () => loginModal.classList.remove('hidden'));
-        closeModal.addEventListener('click', () => loginModal.classList.add('hidden'));
-
-        // Form Sign-In using Passwordless Magic Links
-        formSignin.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signin-email').value;
-            
-            // Mock Login for instantly showing functional UI in dev
-            currentUser = { email: email, id: "temp-user-id-" + Date.now() };
-            updateAuthUI();
-            loginModal.classList.add('hidden');
-            alert(`Logged in as: ${email}`);
-        });
-
-        btnLogout.addEventListener('click', () => {
-            currentUser = null;
-            updateAuthUI();
-        });
-
-        function updateAuthUI() {
-            if (currentUser) {
-                btnLogin.classList.add('hidden');
-                userProfile.classList.remove('hidden');
-                userEmail.textContent = currentUser.email;
-            } else {
-                btnLogin.classList.remove('hidden');
-                userProfile.classList.add('hidden');
-                userEmail.textContent = '';
-            }
-        }
-
-        // PayChangu Checkout Function
-        function handlePurchase(movieId, purchaseType, amount) {
-            if (!currentUser) {
-                alert("Please click 'Sign In' at the top right before renting or buying a film!");
-                loginModal.classList.remove('hidden');
+        // On Page Load: Handle routing or display logic
+        window.addEventListener('load', () => {
+            if (isStandalone()) {
+                // If they have already installed the PWA, redirect them straight to the App dashboard interface!
+                window.location.href = "/dashboard.html"; // We will create this next
                 return;
             }
 
-            const txRef = "xm-" + Date.now();
-            
-            // Initiate PayChangu Checkout
-            PaychanguCheckout({
-                "public_key": "pub-test-3rZ9U3U9Z582e071v89Z6n2L0W52L79M", // <-- Use test key
-                "tx_ref": txRef,
-                "amount": amount,
-                "currency": "MWK",
-                "callback_url": window.location.href,
-                "customer": {
-                    "email": currentUser.email,
-                    "first_name": "Viewer",
-                    "last_name": "XM Studio"
-                },
-                "customization": {
-                    "title": `XM Studio: ${movieId.replace('-', ' ').toUpperCase()}`,
-                    "description": `Unlock ${purchaseType.toUpperCase()} Access`
-                },
-                "meta": {
-                    "movie_id": movieId,
-                    "purchase_type": purchaseType,
-                    "user_id": currentUser.id
-                },
-                onSuccess: function(response) {
-                    alert("Payment successful! Processing on our systems... please refresh in a moment!");
-                },
-                onClose: function() {
-                    console.log("Payment window closed.");
+            // Configure button click based on operating system
+            btnInstall.addEventListener('click', async () => {
+                if (isIOS()) {
+                    // Apple iOS Workaround trigger: Show the beautiful step-by-step overlay
+                    iosOverlay.classList.remove('hidden');
+                } else if (deferredPrompt) {
+                    // Android & Desktop: Trigger standard automatic browser prompt
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install: ${outcome}`);
+                    deferredPrompt = null;
+                } else {
+                    alert("To install this app, please use your browser's options menu and choose 'Install' or 'Add to Home Screen'.");
                 }
             });
-        }
+        });
+
+        // Store the prompt event for Android & Chromium browsers
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Update button UI to look exciting
+            btnInstall.innerHTML = `<i class="fa-solid fa-square-plus"></i> Add to Home Screen`;
+        });
+
+        // Track when the installation successfully finishes
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('XM STUDIO App successfully installed.');
+            window.location.href = "/dashboard.html";
+        });
+
+        // Close Apple iOS popup overlay manual control
+        closeIos.addEventListener('click', () => {
+            iosOverlay.classList.add('hidden');
+        });
     </script>
 </body>
 </html>
