@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XM STUDIO - PWA Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://js.paychangu.com/v1/inline.js"></script>
+    
+    <style>
+        body {
+            background-color: #0c0c0e;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <div id="auth-gate" class="fixed inset-0 z-50 bg-[#0c0c0e] flex flex-col justify-center items-center px-6">
+        <div class="w-full max-w-sm flex flex-col items-center justify-between h-[82vh]">
+            
+            <div class="flex flex-col items-center justify-center flex-grow">
+                <div class="w-44 h-44 bg-black rounded-[40px] flex flex-col items-center justify-center border border-zinc-900 shadow-2xl">
+                    <span class="text-[#FF3E1F] font-black text-4xl tracking-tighter leading-none text-center">XM<br>STUDIO</span>
+                </div>
+            </div>
+
+            <div class="w-full space-y-4 pb-8">
+                
+                <div class="space-y-3">
+                    <div id="username-field-container" class="hidden">
+                        <input type="text" id="auth-username" placeholder="Username / Name" 
+                               class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
+                    </div>
+
+                    <input type="email" id="auth-email" placeholder="Email Address" 
+                           class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
+                    
+                    <input type="password" id="auth-password" placeholder="Password (min 6 chars)" 
+                           class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3.5 px-4 rounded-xl text-center placeholder-zinc-600 focus:outline-none transition text-sm">
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="executeAuthSubmit()" id="btn-primary-action" 
+                            class="w-full transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2">
+                        <i id="auth-spinner" class="fa-solid fa-circle-notch animate-spin hidden"></i>
+                        <span id="primary-btn-text">Sign In</span>
+                    </button>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="toggleAuthMode()" id="btn-toggle-view" class="text-xs text-zinc-500 hover:text-white transition duration-150 underline decoration-zinc-700 underline-offset-4">
+                        Don't have an account? Sign Up instead
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="hidden flex-grow flex flex-col">
+        <header class="sticky top-0 z-40 bg-[#0c0c0e] bg-opacity-95 px-4 md:px-12 py-4 flex items-center justify-between border-b border-zinc-900">
+            <span class="text-[#FF3E1F] font-black text-2xl tracking-wider">XM STUDIO</span>
+            
+            <div class="flex items-center gap-4">
+                <span id="user-display" class="text-zinc-500 text-xs hidden md:inline font-mono"></span>
+                <button onclick="logout()" class="text-zinc-400 hover:text-white text-xs font-semibold uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> Sign Out
+                </button>
+            </div>
+        </header>
+
+        <section class="relative h-[45vh] md:h-[60vh] w-full flex items-end bg-gradient-to-t from-[#0c0c0e] via-transparent to-black">
+            <img id="hero-img" src="" alt="Hero Movie Background" class="absolute inset-0 w-full h-full object-cover -z-10 opacity-50">
+            
+            <div class="px-4 md:px-12 pb-8 max-w-2xl">
+                <span class="text-[#FF3E1F] font-bold tracking-widest text-xs uppercase"><i class="fa-solid fa-star mr-1"></i> Global Showcase</span>
+                <h1 id="hero-title" class="text-3xl md:text-5xl font-black mt-2 leading-none">Loading...</h1>
+                <p id="hero-desc" class="text-zinc-400 text-xs md:text-sm mt-3 line-clamp-3">Loading details...</p>
+                
+                <div class="flex gap-3 mt-6" id="hero-purchase-actions">
+                    <button id="btn-rent" class="bg-white text-black hover:bg-zinc-200 font-bold px-5 py-3 rounded-lg flex items-center gap-2 text-xs transition"></button>
+                    <button id="btn-buy" class="bg-zinc-900 hover:bg-zinc-800 text-white font-bold px-5 py-3 rounded-lg flex items-center gap-2 text-xs transition border border-zinc-800"></button>
+                </div>
+                <button id="btn-watch-now" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3.5 rounded-lg flex items-center gap-2 text-sm shadow-lg transition">
+                    <i class="fa-solid fa-play"></i> Watch Movie Now
+                </button>
+            </div>
+        </section>
+
+        <main class="px-4 md:px-12 py-8 flex-grow">
+            <h2 class="text-lg font-bold text-zinc-300 mb-6 flex items-center gap-2">
+                <span class="w-1 h-5 bg-[#FF3E1F] rounded"></span> Showcase Catalog
+            </h2>
+            <div id="movie-catalog" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </main>
+
+        <footer class="border-t border-zinc-900 py-4 text-center text-zinc-600 text-[10px]">
+            <p>&copy; 2026 XM Studio. Independent, Mobile-First PWA.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Production API Constants
+        const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
+        const PAYCHANGU_PUBLIC_KEY = "pub-test-HYSBQpa5K91mmXMHrjhkmC6mAjObPJ2u"; 
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let activeUser = null;
+        let selectedMovie = null;
+        let currentAuthMode = 'signin'; // Track view state style
+
+        // Initialize state view controller
+        async function runInit() {
+            updateAuthFormUI(); // Apply the default sign-in layout design rules
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                activeUser = session.user;
+                showDashboard();
+            } else {
+                showAuthGate();
+            }
+        }
+
+        // Handles view changes based on your 2 sketches
+        function toggleAuthMode() {
+            currentAuthMode = (currentAuthMode === 'signin') ? 'signup' : 'signin';
+            updateAuthFormUI();
+        }
+
+        // Dynamically restyle input fields and buttons to perfectly match your sketches
+        function updateAuthFormUI() {
+            const usernameContainer = document.getElementById('username-field-container');
+            const primaryBtn = document.getElementById('btn-primary-action');
+            const primaryBtnText = document.getElementById('primary-btn-text');
+            const toggleBtn = document.getElementById('btn-toggle-view');
+
+            if (currentAuthMode === 'signin') {
+                // Layout 1: Sign In Mode (White button, 2 inputs)
+                usernameContainer.classList.add('hidden');
+                primaryBtnText.innerText = "Sign In";
+                primaryBtn.className = "w-full bg-white text-black hover:bg-zinc-100 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2 border border-zinc-200";
+                toggleBtn.innerText = "Don't have an account? Sign Up instead";
+            } else {
+                // Layout 2: Sign Up Mode (Red accent button, 3 inputs)
+                usernameContainer.classList.remove('hidden');
+                primaryBtnText.innerText = "Create Account";
+                primaryBtn.className = "w-full bg-[#FF3E1F] text-white hover:bg-red-700 active:scale-[0.98] transition-all duration-200 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm tracking-wide flex items-center justify-center gap-2";
+                toggleBtn.innerText = "Already have an account? Sign In instead";
+            }
+        }
+
+        // Execution Controller tied right to Supabase API endpoints
+        async function executeAuthSubmit() {
+            const email = document.getElementById('auth-email').value.trim();
+            const password = document.getElementById('auth-password').value.trim();
+            const username = document.getElementById('auth-username').value.trim();
+            const spinner = document.getElementById('auth-spinner');
+
+            if (!email || !password) {
+                alert("Please fill in your email address and password.");
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+
+            if (currentAuthMode === 'signup') {
+                // Execute Supabase sign up engine
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: { display_name: username || 'New Viewer' }
+                    }
+                });
+                spinner.classList.add('hidden');
+
+                if (error) {
+                    alert(`Sign Up error: ${error.message}`);
+                } else {
+                    alert("Account setup completed! Proceed to Sign In.");
+                    currentAuthMode = 'signin';
+                    updateAuthFormUI();
+                }
+            } else {
+                // Execute Supabase sign in verification
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                spinner.classList.add('hidden');
+
+                if (error) {
+                    alert(`Sign In error: ${error.message}`);
+                } else {
+                    activeUser = data.user;
+                    showDashboard();
+                }
+            }
+        }
+
+        function showAuthGate() {
+            document.getElementById('auth-gate').classList.remove('hidden');
+            document.getElementById('main-dashboard').classList.add('hidden');
+        }
+
+        function showDashboard() {
+            document.getElementById('auth-gate').classList.add('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
+            document.getElementById('user-display').innerText = activeUser.email;
+            fetchDashboardContent();
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            activeUser = null;
+            showAuthGate();
+        }
+
+        async function fetchDashboardContent() {
+            const { data: movies, error } = await supabase.from('movies').select('*');
+            if (error || !movies.length) return;
+
+            selectedMovie = movies[0];
+            
+            document.getElementById('hero-title').innerText = selectedMovie.title;
+            document.getElementById('hero-desc').innerText = selectedMovie.description;
+            document.getElementById('hero-img').src = selectedMovie.thumbnail_url;
+            
+            document.getElementById('btn-rent').innerHTML = `<i class="fa-solid fa-clock"></i> Rent MWK ${selectedMovie.rent_price}`;
+            document.getElementById('btn-buy').innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy MWK ${selectedMovie.buy_price}`;
+        }
+
+        runInit();
+    </script>
+</body>
+</html>
