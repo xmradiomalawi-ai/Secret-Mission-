@@ -3,314 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fabulous Stream - Gatekeeper</title>
+    <title>XM Studio - Stream & Rent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- PayChangu Inline Popup Library -->
-    <script src="https://in.paychangu.com/js/popup.js"></script>
+    <script src="https://js.paychangu.com/v1/inline.js"></script>
     
     <style>
-        :root {
-            --bg-color: #141414;
-            --primary-color: #E50914;
-            --text-color: #FFFFFF;
-            --text-muted: #AAAAAA;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+        /* Custom styles for Netflix cinematic feel */
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            background-color: #141414;
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
         }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 4%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
-            position: absolute;
-            top: 0;
-            width: 100%;
-            z-index: 10;
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
-        .logo span {
-            color: var(--primary-color);
-        }
-        .auth-btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-        }
-        .hero {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            padding: 0 4%;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(0deg, var(--bg-color) 0%, rgba(20,20,20,0.6) 100%);
-        }
-        .content {
-            position: relative;
-            z-index: 2;
-            max-width: 600px;
-            margin-top: 80px;
-        }
-        .content h1 {
-            font-size: clamp(32px, 5vw, 56px);
-            margin-bottom: 15px;
-        }
-        .content p {
-            color: var(--text-muted);
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-        .btn-group {
-            display: flex;
-            gap: 15px;
-        }
-        .btn {
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 700;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-secondary { background-color: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); }
-        .btn-watch { background-color: #2ecc71; color: white; display: none; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between">
 
-    <header class="navbar">
-        <div class="logo">FABULOUS<span>STREAM</span></div>
-        <button id="auth-status" class="auth-btn">Loading...</button>
+    <header class="sticky top-0 z-50 bg-[#141414] bg-opacity-95 px-4 md:px-12 py-4 flex items-center justify-between border-b border-zinc-800">
+        <div class="flex items-center gap-2">
+            <span class="text-red-600 font-extrabold text-2xl tracking-wider">XM STUDIO</span>
+        </div>
+        
+        <div id="auth-section" class="flex items-center gap-3">
+            <button id="btn-login" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-1.5 rounded transition">
+                Sign In
+            </button>
+            <div id="user-profile" class="hidden flex items-center gap-3">
+                <span id="user-email" class="text-zinc-400 text-sm hidden md:inline"></span>
+                <button id="btn-logout" class="text-zinc-400 hover:text-white text-sm font-semibold">
+                    Sign Out
+                </button>
+            </div>
+        </div>
     </header>
 
-    <section class="hero" id="hero-bg">
-        <div class="content">
-            <h1 id="movie-title">Loading Title...</h1>
-            <p id="movie-desc">Fetching details...</p>
+    <section class="relative h-[55vh] md:h-[70vh] w-full flex items-end bg-gradient-to-t from-[#141414] via-transparent to-black">
+        <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1200&q=80" 
+             alt="Hero Film Background" class="absolute inset-0 w-full h-full object-cover -z-10 opacity-60">
+        
+        <div class="px-4 md:px-12 pb-10 max-w-2xl">
+            <span class="text-red-500 font-bold tracking-widest text-xs uppercase"><i class="fa-solid fa-fire mr-1"></i> Featured Release</span>
+            <h1 class="text-4xl md:text-6xl font-black mt-2 leading-none">THE LAST FRONTIER</h1>
+            <p class="text-zinc-300 text-sm md:text-base mt-4 line-clamp-3">
+                An exclusive, ultra-high definition cinematic masterclass exploring the depths of the solar system, captured and produced completely independently.
+            </p>
             
-            <div id="action-area">
-                <div id="gatekeeper-actions" class="btn-group" style="display: none;">
-                    <button class="btn btn-secondary" onclick="initiatePayment('rent')">Rent for <span id="rent-price">...</span></button>
-                    <button class="btn btn-primary" onclick="initiatePayment('buy')">Buy for <span id="buy-price">...</span></button>
-                </div>
-                <button id="watch-now-btn" class="btn btn-watch" onclick="goToPlayer()">🎬 Watch Movie Now</button>
+            <div class="flex flex-wrap gap-3 mt-6">
+                <button onclick="handlePurchase('movie-001', 'rent', 1500)" class="bg-white text-black hover:bg-zinc-200 font-bold px-6 py-3 rounded flex items-center gap-2 text-sm transition">
+                    <i class="fa-solid fa-clock"></i> Rent for MWK 1,500
+                </button>
+                <button onclick="handlePurchase('movie-001', 'buy', 5000)" class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold px-6 py-3 rounded flex items-center gap-2 text-sm transition border border-zinc-700">
+                    <i class="fa-solid fa-cart-shopping"></i> Buy for MWK 5,000
+                </button>
             </div>
         </div>
     </section>
 
+    <main class="px-4 md:px-12 py-10 flex-grow">
+        <h2 class="text-xl md:text-2xl font-bold text-zinc-100 mb-6 flex items-center gap-2">
+            <span class="w-1 h-6 bg-red-600 rounded"></span> Independent Masters Catalog
+        </h2>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            
+            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
+                    <div class="p-3">
+                        <h3 class="font-bold text-sm md:text-base text-white">Chasing Horizons</h3>
+                        <p class="text-zinc-400 text-xs mt-1">Adventure, Travel</p>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-zinc-800 flex gap-2">
+                    <button onclick="handlePurchase('chasing-horizons', 'rent', 1000)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
+                        Rent <span class="block text-[9px] text-zinc-400">MWK 1K</span>
+                    </button>
+                    <button onclick="handlePurchase('chasing-horizons', 'buy', 3500)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
+                        Buy <span class="block text-[9px] text-red-200">MWK 3.5K</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
+                    <div class="p-3">
+                        <h3 class="font-bold text-sm md:text-base text-white">Shadow Puppets</h3>
+                        <p class="text-zinc-400 text-xs mt-1">Thriller, Mystery</p>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-zinc-800 flex gap-2">
+                    <button onclick="handlePurchase('shadow-puppets', 'rent', 1200)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
+                        Rent <span class="block text-[9px] text-zinc-400">MWK 1.2K</span>
+                    </button>
+                    <button onclick="handlePurchase('shadow-puppets', 'buy', 4000)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
+                        Buy <span class="block text-[9px] text-red-200">MWK 4K</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
+                    <div class="p-3">
+                        <h3 class="font-bold text-sm md:text-base text-white">Echoes in Silence</h3>
+                        <p class="text-zinc-400 text-xs mt-1">Sci-Fi, Philosophy</p>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-zinc-800 flex gap-2">
+                    <button onclick="handlePurchase('echoes-in-silence', 'rent', 1500)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
+                        Rent <span class="block text-[9px] text-zinc-400">MWK 1.5K</span>
+                    </button>
+                    <button onclick="handlePurchase('echoes-in-silence', 'buy', 5000)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
+                        Buy <span class="block text-[9px] text-red-200">MWK 5K</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800 hover:border-red-600 transition duration-300 flex flex-col justify-between">
+                <div>
+                    <img src="https://images.unsplash.com/photo-1500628557201-ac4c37953058?auto=format&fit=crop&w=600&q=80" alt="Movie Thumbnail" class="w-full h-36 md:h-48 object-cover">
+                    <div class="p-3">
+                        <h3 class="font-bold text-sm md:text-base text-white">Neon Whispers</h3>
+                        <p class="text-zinc-400 text-xs mt-1">Cyberpunk, Indie</p>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-zinc-800 flex gap-2">
+                    <button onclick="handlePurchase('neon-whispers', 'rent', 1000)" class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-xs py-2 rounded text-center text-zinc-300 font-medium transition">
+                        Rent <span class="block text-[9px] text-zinc-400">MWK 1K</span>
+                    </button>
+                    <button onclick="handlePurchase('neon-whispers', 'buy', 3500)" class="flex-1 bg-red-600 hover:bg-red-700 text-xs py-2 rounded text-center text-white font-bold transition">
+                        Buy <span class="block text-[9px] text-red-200">MWK 3.5K</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="border-t border-zinc-800 py-6 text-center text-zinc-500 text-xs mt-12">
+        <p>&copy; 2026 XM Studio. All Rights Reserved. Built on zero budget.</p>
+    </footer>
+
+    <div id="login-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-6 max-w-md w-full relative">
+            <button id="close-modal" class="absolute top-4 right-4 text-zinc-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h2 class="text-xl font-bold text-white mb-4">Sign In to XM Studio</h2>
+            <form id="form-signin" class="space-y-4">
+                <div>
+                    <label class="block text-zinc-400 text-xs font-semibold uppercase mb-1">Email Address</label>
+                    <input type="email" id="signin-email" required class="w-full bg-zinc-800 border border-zinc-700 rounded px-3 py-2 text-white text-sm focus:outline-none focus:border-red-600">
+                </div>
+                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded transition text-sm">
+                    Enter Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // CONFIGURATION: Connected to your exact Supabase project backend
-        const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
-        
-        // PAYCHANGU CONFIGURATION: Swap "pub-test-..." with your production key when ready
-        const PAYCHANGU_PUBLIC_KEY = "pub-test-HYSBQpa5K91mmXMHrjhkmC6mAjObPJ2u";
-        const PAYMENT_CURRENCY = "USD"; // Choose either 'USD' or 'MWK' as preferred by your account setups
+        // Supabase Initialization
+        // REMEMBER TO REPLACE THESE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
+        const SUPABASE_URL = "https://your-supabase-url.supabase.co";
+        const SUPABASE_ANON_KEY = "your-supabase-anon-key";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Initializing the Supabase client safely
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // State Management
+        let currentUser = null;
 
-        let currentMovie = null;
-        let currentUserSession = null;
+        // UI Selectors
+        const authSection = document.getElementById('auth-section');
+        const btnLogin = document.getElementById('btn-login');
+        const loginModal = document.getElementById('login-modal');
+        const closeModal = document.getElementById('close-modal');
+        const formSignin = document.getElementById('form-signin');
+        const userProfile = document.getElementById('user-profile');
+        const userEmail = document.getElementById('user-email');
+        const btnLogout = document.getElementById('btn-logout');
 
-        async function init() {
-            await fetchMovie();
-            await checkUserSession();
-            await handlePaymentCallback(); // Checks if returning from a completed payment
-        }
+        // Modal triggers
+        btnLogin.addEventListener('click', () => loginModal.classList.remove('hidden'));
+        closeModal.addEventListener('click', () => loginModal.classList.add('hidden'));
 
-        async function checkUserSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            const authBtn = document.getElementById('auth-status');
-            currentUserSession = session;
+        // Form Sign-In using Passwordless Magic Links
+        formSignin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signin-email').value;
             
-            if (session) {
-                authBtn.innerText = "Log Out";
-                authBtn.onclick = () => supabase.auth.signOut().then(() => window.location.reload());
-                checkAccess(session.user.id);
+            // Mock Login for instantly showing functional UI in dev
+            currentUser = { email: email, id: "temp-user-id-" + Date.now() };
+            updateAuthUI();
+            loginModal.classList.add('hidden');
+            alert(`Logged in as: ${email}`);
+        });
+
+        btnLogout.addEventListener('click', () => {
+            currentUser = null;
+            updateAuthUI();
+        });
+
+        function updateAuthUI() {
+            if (currentUser) {
+                btnLogin.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+                userEmail.textContent = currentUser.email;
             } else {
-                authBtn.innerText = "Sign In / Register";
-                authBtn.onclick = handleAuth;
-                document.getElementById('gatekeeper-actions').style.display = 'flex';
+                btnLogin.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+                userEmail.textContent = '';
             }
         }
 
-        async function handleAuth() {
-            const email = prompt("Enter email:");
-            const password = prompt("Enter password (min 6 chars):");
-            if (!email || !password) return null;
-
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) {
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
-                if (signUpError) {
-                    alert(signUpError.message);
-                    return null;
-                } else { 
-                    alert("Account created!"); 
-                    window.location.reload(); 
-                    return signUpData.session;
-                }
-            } else {
-                window.location.reload();
-                return data.session;
+        // PayChangu Checkout Function
+        function handlePurchase(movieId, purchaseType, amount) {
+            if (!currentUser) {
+                alert("Please click 'Sign In' at the top right before renting or buying a film!");
+                loginModal.classList.remove('hidden');
+                return;
             }
-        }
 
-        async function fetchMovie() {
-            const { data, error } = await supabase.from('movies').select('*').limit(1).single();
-            if (error) return console.error(error);
+            const txRef = "xm-" + Date.now();
             
-            currentMovie = data;
-            document.getElementById('movie-title').innerText = data.title;
-            document.getElementById('movie-desc').innerText = data.description;
-            document.getElementById('rent-price').innerText = `$${data.rent_price}`;
-            document.getElementById('buy-price').innerText = `$${data.buy_price}`;
-            document.getElementById('hero-bg').style.backgroundImage = `url('${data.thumbnail_url}')`;
-        }
-
-        async function checkAccess(userId) {
-            if (!currentMovie) return;
-            const { data: purchases } = await supabase.from('purchases').select('*').eq('user_id', userId).eq('movie_id', currentMovie.id);
-            
-            const hasAccess = purchases?.some(p => {
-                if (p.purchase_type === 'buy') return true;
-                if (p.purchase_type === 'rent') return new Date(p.expires_at) > new Date();
-                return false;
-            });
-
-            if (hasAccess) {
-                document.getElementById('watch-now-btn').style.display = 'inline-block';
-                document.getElementById('gatekeeper-actions').style.display = 'none';
-            } else {
-                document.getElementById('gatekeeper-actions').style.display = 'flex';
-            }
-        }
-
-        // --- NEW: Initiate PayChangu Checkout ---
-        async function initiatePayment(type) {
-            // Require user to be logged in first
-            if (!currentUserSession) {
-                alert("Please log in or register before completing your purchase!");
-                const activeSession = await handleAuth();
-                if (!activeSession) return;
-            }
-
-            const price = type === 'rent' ? currentMovie.rent_price : currentMovie.buy_price;
-            const txRef = "tx-" + Date.now() + "-" + Math.floor(Math.random() * 1000000);
-
-            // Construct callback URL to point back to index.html with success state query parameters
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.set('payment_success', 'true');
-            currentUrl.searchParams.set('tx_ref', txRef);
-            
-            // Temporarily store checkout data to local storage so we can insert it into Supabase upon successful return redirect
-            localStorage.setItem('pending_checkout', JSON.stringify({
-                user_id: currentUserSession.user.id,
-                movie_id: currentMovie.id,
-                purchase_type: type,
-                tx_ref: txRef
-            }));
-
-            // Launch PayChangu Checkout popup flow
+            // Initiate PayChangu Checkout
             PaychanguCheckout({
-                "public_key": PAYCHANGU_PUBLIC_KEY,
+                "public_key": "pub-test-3rZ9U3U9Z582e071v89Z6n2L0W52L79M", // <-- Use test key
                 "tx_ref": txRef,
-                "amount": Number(price),
-                "currency": PAYMENT_CURRENCY,
-                "email": currentUserSession.user.email || "customer@fabulousstream.com",
-                "first_name": "Customer",
-                "callback_url": currentUrl.toString(),
-                "return_url": window.location.href,
+                "amount": amount,
+                "currency": "MWK",
+                "callback_url": window.location.href,
+                "customer": {
+                    "email": currentUser.email,
+                    "first_name": "Viewer",
+                    "last_name": "XM Studio"
+                },
                 "customization": {
-                    "title": `Fabulous Stream: ${currentMovie.title}`,
-                    "description": `${type.toUpperCase()} - ${currentMovie.title}`
+                    "title": `XM Studio: ${movieId.replace('-', ' ').toUpperCase()}`,
+                    "description": `Unlock ${purchaseType.toUpperCase()} Access`
+                },
+                "meta": {
+                    "movie_id": movieId,
+                    "purchase_type": purchaseType,
+                    "user_id": currentUser.id
+                },
+                onSuccess: function(response) {
+                    alert("Payment successful! Processing on our systems... please refresh in a moment!");
+                },
+                onClose: function() {
+                    console.log("Payment window closed.");
                 }
             });
         }
-
-        // --- NEW: Handle Returning Successfully from PayChangu ---
-        async function handlePaymentCallback() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const isSuccess = urlParams.get('payment_success') === 'true';
-            const txRef = urlParams.get('tx_ref');
-
-            if (isSuccess && txRef) {
-                const storedData = localStorage.getItem('pending_checkout');
-                if (storedData) {
-                    const checkout = JSON.parse(storedData);
-
-                    // Check if this pending transaction matches the URL reference safely
-                    if (checkout.tx_ref === txRef) {
-                        let expiresAt = null;
-                        if (checkout.purchase_type === 'rent') {
-                            // Calculate rent expiration time (e.g. 48 hours from now)
-                            const date = new Date();
-                            date.setHours(date.getHours() + 48);
-                            expiresAt = date.toISOString();
-                        }
-
-                        // Insert the record straight into Supabase database
-                        const { error } = await supabase.from('purchases').insert([{
-                            user_id: checkout.user_id,
-                            movie_id: checkout.movie_id,
-                            purchase_type: checkout.purchase_type,
-                            expires_at: expiresAt,
-                            created_at: new Date().toISOString()
-                        }]);
-
-                        if (error) {
-                            console.error("Error updating purchases:", error.message);
-                            alert("Something went wrong claiming your purchase. Contact support with transaction ref: " + txRef);
-                        } else {
-                            alert(`🎉 Payment Successful! Enjoy watching "${currentMovie?.title || 'your movie'}"!`);
-                            // Remove local cache so we don't repeat the action on simple refreshes
-                            localStorage.removeItem('pending_checkout');
-                            
-                            // Clean up browser URL clean parameters cleanly without refreshing again
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                            
-                            // Recheck the UI permission mapping
-                            if (currentUserSession) {
-                                await checkAccess(currentUserSession.user.id);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        function goToPlayer() {
-            window.location.href = "watch.html";
-        }
-
-        init();
     </script>
 </body>
 </html>
