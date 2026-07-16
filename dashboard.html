@@ -149,11 +149,16 @@
         // Initialize state view controller
         async function runInit() {
             setAuthState('welcome'); // Start at welcome state by default
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                activeUser = session.user;
-                showDashboard();
-            } else {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    activeUser = session.user;
+                    showDashboard();
+                } else {
+                    showAuthGate();
+                }
+            } catch (err) {
+                console.error("Session check failed, showing welcome portal:", err);
                 showAuthGate();
             }
         }
@@ -223,47 +228,53 @@
 
             spinner.classList.remove('hidden');
 
-            if (currentAuthMode === 'signup') {
-                // 1. Sign Up User with Supabase Auth
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
+            try {
+                if (currentAuthMode === 'signup') {
+                    // 1. Sign Up User with Supabase Auth
+                    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                        email: email,
+                        password: password
+                    });
 
-                if (signUpError) {
+                    if (signUpError) {
+                        spinner.classList.add('hidden');
+                        alert(`Sign Up error: ${signUpError.message}`);
+                        return;
+                    }
+
+                    // 2. Immediately login & redirect straight to Dashboard (No manual steps)
+                    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+
                     spinner.classList.add('hidden');
-                    alert(`Sign Up error: ${signUpError.message}`);
-                    return;
-                }
 
-                // 2. Immediately login & redirect straight to Dashboard
-                const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
+                    if (signInError) {
+                        // Fallback transition if auto-signin has a restriction
+                        alert("Account created successfully! Please sign in.");
+                        setAuthState('signin');
+                    } else {
+                        activeUser = signInData.user;
+                        showDashboard();
+                    }
 
-                spinner.classList.add('hidden');
-
-                if (signInError) {
-                    // Fallback to manual Sign In page transition if Supabase requires email verification first
-                    alert("Account registered! Please sign in with your credentials.");
-                    setAuthState('signin');
                 } else {
-                    activeUser = signInData.user;
-                    showDashboard();
-                }
+                    // Classic Sign In Execution
+                    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    spinner.classList.add('hidden');
 
-            } else {
-                // Classic Sign In Execution
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                    if (error) {
+                        alert(`Sign In error: ${error.message}`);
+                    } else {
+                        activeUser = data.user;
+                        showDashboard();
+                    }
+                }
+            } catch (err) {
                 spinner.classList.add('hidden');
-
-                if (error) {
-                    alert(`Sign In error: ${error.message}`);
-                } else {
-                    activeUser = data.user;
-                    showDashboard();
-                }
+                alert("A connection error occurred. Please try again.");
+                console.error(err);
             }
         }
 
@@ -280,24 +291,32 @@
         }
 
         async function logout() {
-            await supabase.auth.signOut();
+            try {
+                await supabase.auth.signOut();
+            } catch (err) {
+                console.error("Sign out session error:", err);
+            }
             activeUser = null;
             showAuthGate();
             setAuthState('welcome');
         }
 
         async function fetchDashboardContent() {
-            const { data: movies, error } = await supabase.from('movies').select('*');
-            if (error || !movies.length) return;
+            try {
+                const { data: movies, error } = await supabase.from('movies').select('*');
+                if (error || !movies.length) return;
 
-            selectedMovie = movies[0];
-            
-            document.getElementById('hero-title').innerText = selectedMovie.title;
-            document.getElementById('hero-desc').innerText = selectedMovie.description;
-            document.getElementById('hero-img').src = selectedMovie.thumbnail_url;
-            
-            document.getElementById('btn-rent').innerHTML = `<i class="fa-solid fa-clock"></i> Rent MWK ${selectedMovie.rent_price}`;
-            document.getElementById('btn-buy').innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy MWK ${selectedMovie.buy_price}`;
+                selectedMovie = movies[0];
+                
+                document.getElementById('hero-title').innerText = selectedMovie.title;
+                document.getElementById('hero-desc').innerText = selectedMovie.description;
+                document.getElementById('hero-img').src = selectedMovie.thumbnail_url;
+                
+                document.getElementById('btn-rent').innerHTML = `<i class="fa-solid fa-clock"></i> Rent MWK ${selectedMovie.rent_price}`;
+                document.getElementById('btn-buy').innerHTML = `<i class="fa-solid fa-cart-shopping"></i> Buy MWK ${selectedMovie.buy_price}`;
+            } catch (err) {
+                console.error("Error retrieving catalog:", err);
+            }
         }
 
         runInit();
