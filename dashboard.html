@@ -42,17 +42,17 @@
             
             <div class="flex flex-col items-center justify-center flex-grow">
                 <div class="w-44 h-44 bg-black rounded-[40px] flex flex-col items-center justify-center border border-zinc-900 shadow-2xl overflow-hidden">
-                    <img src="apple-touch-icon.png" alt="XM STUDIO Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.display='block';">
+                    <img src="apple-touch-icon.png" alt="XM STUDIO Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; document.getElementById('logo-text-fallback').style.[...]"
                     <span id="logo-text-fallback" style="display:none;" class="text-[#FF3E1F] font-black text-4xl tracking-tighter leading-none text-center">XM<br>STUDIO</span>
                 </div>
             </div>
 
             <div class="w-full pb-8">
                 <div id="state-welcome" class="space-y-4">
-                    <button onclick="setAuthState('signin')" class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm transition-all border border-zinc-200">
+                    <button onclick="setAuthState('signin')" class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm transition-all border border-zin[...]">
                         Sign In
                     </button>
-                    <button onclick="setAuthState('signup')" class="w-full bg-transparent hover:bg-zinc-900 text-white font-bold py-3.5 px-6 rounded-xl text-sm transition-all border border-zinc-700">
+                    <button onclick="setAuthState('signup')" class="w-full bg-transparent hover:bg-zinc-900 text-white font-bold py-3.5 px-6 rounded-xl text-sm transition-all border border-zinc-70[...]">
                         Sign Up
                     </button>
                 </div>
@@ -62,32 +62,32 @@
                         <div>
                             <label class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Email</label>
                             <input type="email" id="auth-email" placeholder="Enter your email" 
-                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-s[...]">
                         </div>
                         
                         <div>
                             <label class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Password</label>
                             <input type="password" id="auth-password" placeholder="Enter password" 
-                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-s[...]">
                         </div>
 
                         <div id="rewrite-password-container" class="hidden">
                             <label class="block text-xs text-zinc-400 mb-1 font-semibold pl-1">Rewrite Password</label>
                             <input type="password" id="auth-rewrite-password" placeholder="Re-enter password" 
-                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-sm">
+                                   class="w-full bg-zinc-950 border border-zinc-800 focus:border-[#FF3E1F] text-white py-3 px-4 rounded-xl placeholder-zinc-700 focus:outline-none transition text-s[...]">
                         </div>
                     </div>
 
                     <div class="pt-2">
                         <button onclick="executeAuthSubmit()" id="btn-primary-action" 
-                                class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 border border-zinc-200 transition-all duration-200">
+                                class="w-full bg-white text-black hover:bg-zinc-100 font-bold py-3.5 px-6 rounded-xl shadow-md text-sm flex items-center justify-center gap-2 border border-zinc-200[...]">
                             <i id="auth-spinner" class="fa-solid fa-circle-notch animate-spin hidden"></i>
                             <span id="primary-btn-text">Sign In</span>
                         </button>
                     </div>
 
                     <div class="text-center pt-2 flex flex-col gap-2">
-                        <button onclick="toggleAuthMode()" id="btn-toggle-view" class="text-xs text-zinc-500 hover:text-white transition duration-150 underline decoration-zinc-700 underline-offset-4">
+                        <button onclick="toggleAuthMode()" id="btn-toggle-view" class="text-xs text-zinc-500 hover:text-white transition duration-150 underline decoration-zinc-700 underline-offset[...]">
                             Don't have an account? Sign Up instead
                         </button>
                         <button onclick="setAuthState('welcome')" class="text-xs text-zinc-600 hover:text-zinc-400 transition duration-150 flex items-center justify-center gap-1">
@@ -160,7 +160,7 @@
             </div>
 
             <div class="pt-8">
-                <button onclick="logout()" class="w-full bg-zinc-950 hover:bg-zinc-900 text-[#FF3E1F] font-bold py-3.5 rounded-xl border border-zinc-900 text-xs transition uppercase tracking-wider">
+                <button onclick="logout()" class="w-full bg-zinc-950 hover:bg-zinc-900 text-[#FF3E1F] font-bold py-3.5 rounded-xl border border-zinc-900 text-xs transition uppercase tracking-wide[...]">
                     <i class="fa-solid fa-power-off mr-2"></i> Log Out
                 </button>
             </div>
@@ -190,7 +190,7 @@
 
     <script>
         const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDU[...]"
 
         let supabase;
         let activeUser = null;
@@ -382,7 +382,7 @@
                         btn.className = "flex-1 py-2 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150";
                     } else {
                         // Standard wireframe style
-                        btn.className = "flex-1 py-2 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150";
+                        btn.className = "flex-1 py-2 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-[...]";
                     }
                 }
             });
@@ -400,18 +400,37 @@
             }
         }
 
-        // Optional logic: retrieves user-purchased items if they exist
+        // Updated logic: Retrieves user-purchased items by querying the purchases table
         async function fetchUserLibrary() {
             try {
                 const container = document.getElementById('user-library-container');
-                // Customize this query if your system uses a 'purchases' or 'library' table
-                const { data: library, error } = await supabase.from('movies').select('*').limit(2);
                 
-                if (error || !library || library.length === 0) {
+                // 1. Fetch the list of movie IDs purchased by the active user
+                const { data: purchaseData, error: purchaseError } = await supabase
+                    .from('purchases')
+                    .select('movie_id')
+                    .eq('user_id', activeUser.id);
+                    
+                if (purchaseError || !purchaseData || purchaseData.length === 0) {
                     container.innerHTML = `<p class="text-zinc-600 text-xs col-span-2">No purchased items yet.</p>`;
                     return;
                 }
 
+                // 2. Extract the IDs from the purchase records
+                const purchasedMovieIds = purchaseData.map(p => p.movie_id);
+
+                // 3. Fetch the actual movie details for those IDs
+                const { data: library, error: movieError } = await supabase
+                    .from('movies')
+                    .select('*')
+                    .in('id', purchasedMovieIds);
+
+                if (movieError || !library || library.length === 0) {
+                    container.innerHTML = `<p class="text-zinc-600 text-xs col-span-2">No purchased titles found.</p>`;
+                    return;
+                }
+
+                // 4. Render the library
                 container.innerHTML = library.map(movie => {
                     const img = movie.thumbnail_url ? movie.thumbnail_url : 'apple-touch-icon.png';
                     return `
@@ -423,8 +442,9 @@
                         </div>
                     `;
                 }).join('');
+
             } catch (err) {
-                console.error(err);
+                console.error("Error fetching library:", err);
             }
         }
 
