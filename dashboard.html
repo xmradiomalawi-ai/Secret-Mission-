@@ -471,6 +471,63 @@
         }
 
         runInit();
+   <script>
+        const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo"; 
+
+        let supabase;
+        let activeUser = null;
+        let cachedMovies = [];
+        let currentAuthMode = 'welcome';
+
+        async function runInit() {
+            setAuthState('welcome');
+            
+            const supabaseLib = window.supabase || (window.supabaseJS ? window.supabaseJS : null);
+            if (!supabaseLib) {
+                console.error("Critical error: Supabase CDN library is unreachable.");
+                alert("Failed to connect to security portal.");
+                return;
+            }
+
+            try {
+                supabase = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (session && !error) {
+                    activeUser = session.user;
+                    showDashboard();
+                } else {
+                    showAuthGate();
+                }
+            } catch (err) {
+                showAuthGate();
+            }
+        }
+
+        // --- ALL YOUR OTHER FUNCTIONS (toggleAuthMode, executeAuthSubmit, etc.) GO HERE ---
+
+        function playMovie(id) {
+            const movie = cachedMovies.find(m => m.id === id);
+            if (movie) {
+                // Show the overlay
+                document.getElementById('movie-detail-overlay').classList.remove('hidden');
+                
+                // Set content
+                document.getElementById('detail-content').innerHTML = `
+                    <h2 class="text-white text-2xl">${movie.title}</h2>
+                    <p class="text-zinc-500">Ready to watch</p>
+                    <button onclick="document.getElementById('movie-detail-overlay').classList.add('hidden')" class="mt-4 bg-white text-black px-6 py-2 rounded-lg">Close</button>
+                `;
+            }
+        }
+
+        function closeDetail() {
+            document.getElementById('movie-detail-overlay').classList.add('hidden');
+        }
+
+        runInit();
     </script>
+        </div>
+</div>
 </body>
 </html>
