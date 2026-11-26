@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to XM STUDIO</title>
+    <title>XM STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-transitional">
-    <meta name="apple-mobile-web-app-title" content="XM STUDIO">
-    
-    <!-- Updated Branded Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.0/dist/umd/supabase.js"></script>
+
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" href="apple-touch-icon.png">
 
@@ -20,134 +15,315 @@
         body {
             background-color: #0c0c0e;
             color: #ffffff;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #0c0c0e;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between items-center px-4 py-8 relative">
+<body class="min-h-screen flex flex-col justify-between bg-[#0c0c0e] text-white">
 
-    <header class="w-full max-w-xl flex justify-center py-4">
-        <span class="text-red-600 font-black text-3xl tracking-widest">XM STUDIO</span>
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-[#0c0c0e]/95 backdrop-blur px-6 py-4 flex items-center justify-between border-b border-zinc-900">
+        <span class="text-[#FF3E1F] font-black text-xl tracking-wider">XM STUDIO</span>
+        <div class="flex items-center gap-2">
+            <span class="text-zinc-500 text-[11px] font-medium">Pay &amp; Watch</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        </div>
     </header>
 
-    <main class="flex-grow flex flex-col justify-center items-center text-center max-w-md w-full my-auto">
-        <div class="space-y-6">
-            <div class="mx-auto w-24 h-24 bg-gradient-to-tr from-red-600 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-red-900/30">
-                <i class="fa-solid fa-play text-4xl text-white ml-1"></i>
+    <!-- Catalog View -->
+    <main id="view-home" class="px-6 py-6 flex-grow overflow-y-auto custom-scroll max-w-4xl mx-auto w-full pb-28">
+        <div id="movie-catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="animate-pulse flex flex-col space-y-3">
+                <div class="aspect-video bg-zinc-900 rounded-2xl"></div>
+                <div class="h-4 bg-zinc-900 rounded w-2/3"></div>
+                <div class="h-3 bg-zinc-900 rounded w-1/3"></div>
             </div>
-            
-            <div class="space-y-2">
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Welcome to <span class="text-red-600">XM STUDIO</span></h1>
-                <p class="text-zinc-400 text-sm md:text-base leading-relaxed">
-                    Install our Progressive Web App (PWA) on your device for full, distraction-free movie streaming and offline cinematic access.
-                </p>
-            </div>
-
-            <div id="cta-container" class="pt-4">
-                <button id="btn-install" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg transition duration-300 transform active:scale-95 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-download"></i> Install App to Start
-                </button>
+            <div class="animate-pulse flex flex-col space-y-3">
+                <div class="aspect-video bg-zinc-900 rounded-2xl"></div>
+                <div class="h-4 bg-zinc-900 rounded w-2/3"></div>
+                <div class="h-3 bg-zinc-900 rounded w-1/3"></div>
             </div>
         </div>
     </main>
 
-    <footer class="text-zinc-600 text-xs text-center mt-8">
-        <p>Zero-Budget Cinematic System &bull; Built to stream natively on your device.</p>
-    </footer>
+    <!-- Search View -->
+    <main id="view-search" class="hidden px-6 py-6 flex-grow max-w-4xl mx-auto w-full pb-28">
+        <h2 class="text-xl font-bold text-white mb-4">Search Movies</h2>
+        <div class="relative mb-6">
+            <input
+                type="text"
+                id="search-input"
+                oninput="handleSearch(this.value)"
+                placeholder="Search by title, genre, or language..."
+                class="w-full bg-zinc-900 border border-zinc-800 text-white py-3 pl-11 pr-4 rounded-xl placeholder-zinc-500 focus:outline-none focus:border-[#FF3E1F] text-sm"
+            >
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-zinc-500 text-sm"></i>
+        </div>
+        <div id="search-results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <p class="text-zinc-500 text-xs col-span-full text-center py-8">Type to search movies...</p>
+        </div>
+    </main>
 
-    <div id="ios-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end justify-center p-4 hidden">
-        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-sm p-6 space-y-6 shadow-2xl relative mb-4">
-            
-            <button id="close-ios" class="absolute top-4 right-4 text-zinc-500 hover:text-white">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-
-            <div class="text-center space-y-2">
-                <h3 class="text-xl font-extrabold text-white">Install on Apple iOS</h3>
-                <p class="text-zinc-400 text-sm">Follow these short steps to add <strong class="text-white">XM STUDIO</strong> to your iPhone or iPad home screen:</p>
+    <!-- Watch / Stream Modal -->
+    <div id="player-modal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl max-w-2xl w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h3 id="player-movie-title" class="text-base font-bold text-white truncate">Now Streaming</h3>
+                <button onclick="closePlayerModal()" class="text-zinc-400 hover:text-white text-lg px-2 py-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
-            <div class="space-y-4">
-                <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/60">
-                    <span class="w-8 h-8 rounded-full bg-red-950 text-red-500 font-bold flex items-center justify-center shrink-0">1</span>
-                    <p class="text-xs text-zinc-300">
-                        Tap the <strong class="text-white">Share</strong> button at the bottom of Safari: <br>
-                        <span class="text-blue-400 font-semibold"><i class="fa-solid fa-arrow-up-from-bracket text-base mt-1"></i> (Share Icon)</span>
-                    </p>
-                </div>
+            <video id="stream-video" controls playsinline class="w-full aspect-video bg-black rounded-xl border border-zinc-900">
+                Your browser does not support video playback.
+            </video>
 
-                <div class="flex items-center gap-4 bg-zinc-900/50 p-3 rounded-lg border border-zinc-800/60">
-                    <span class="w-8 h-8 rounded-full bg-red-950 text-red-500 font-bold flex items-center justify-center shrink-0">2</span>
-                    <p class="text-xs text-zinc-300">
-                        Scroll down the options list and select: <br>
-                        <strong class="text-white"><i class="fa-regular fa-square-plus mr-1"></i> Add to Home Screen</strong>
-                    </p>
-                </div>
+            <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                <input
+                    type="text"
+                    id="tx-ref-input"
+                    placeholder="Enter or paste PayChangu tx_ref to unlock stream..."
+                    class="flex-1 bg-zinc-900 border border-zinc-800 focus:border-[#FF3E1F] text-white text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
+                >
+                <button
+                    onclick="loadStreamFromInput()"
+                    class="bg-[#FF3E1F] hover:bg-[#e23518] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                >
+                    Unlock &amp; Play
+                </button>
             </div>
-
-            <div class="text-center pt-2">
-                <span class="text-[10px] text-zinc-500 font-medium tracking-wide uppercase">Once added, open the app from your home screen!</span>
-            </div>
+            <p id="player-status" class="text-[11px] text-zinc-400"></p>
         </div>
     </div>
 
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#0c0c0e] border-t border-zinc-900 py-3.5 px-6 z-40 flex justify-center items-center">
+        <div class="flex items-center justify-between w-full max-w-sm gap-3">
+            <button
+                id="nav-btn-home"
+                onclick="switchDashboardTab('home')"
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150"
+            >
+                <i class="fa-solid fa-film text-base mr-2"></i>
+                <span class="text-xs font-bold">Catalog</span>
+            </button>
+
+            <button
+                id="nav-btn-search"
+                onclick="switchDashboardTab('search')"
+                class="flex-1 py-2.5 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150"
+            >
+                <i class="fa-solid fa-magnifying-glass text-base mr-2"></i>
+                <span class="text-xs font-bold">Search</span>
+            </button>
+        </div>
+    </nav>
+
     <script>
-        let deferredPrompt;
-        const btnInstall = document.getElementById('btn-install');
-        const iosOverlay = document.getElementById('ios-overlay');
-        const closeIos = document.getElementById('close-ios');
+        const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo";
+        const STREAM_WORKER_BASE = "https://paychangu-webhook.xmradiomalawi.workers.dev/stream";
 
-        // Helper: Check if already installed & running in Standalone PWA mode
-        const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+        let supabaseClient = null;
+        let cachedMovies = [];
+        let activeMovie = null;
 
-        // Helper: Detect if user is on iOS / Safari
-        const isIOS = () => {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        };
+        function formatRentPrice(price) {
+            if (price === null || price === undefined || price === "") {
+                return "Rent";
+            }
+            const numeric = Number(price);
+            if (!Number.isNaN(numeric)) {
+                return `Rent : $${numeric.toFixed(2)}`;
+            }
+            return `Rent : ${price}`;
+        }
 
-        // On Page Load: Handle routing or display logic
-        window.addEventListener('load', () => {
-            if (isStandalone()) {
-                // If they have already installed the PWA, redirect them straight to the App dashboard interface!
-                window.location.href = "/dashboard.html"; // We will create this next
+        function switchDashboardTab(tabName) {
+            const tabs = ["home", "search"];
+            tabs.forEach((t) => {
+                const view = document.getElementById(`view-${t}`);
+                if (view) {
+                    view.classList.toggle("hidden", t !== tabName);
+                }
+
+                const btn = document.getElementById(`nav-btn-${t}`);
+                if (btn) {
+                    if (t === tabName) {
+                        btn.className = "flex-1 py-2.5 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150";
+                    } else {
+                        btn.className = "flex-1 py-2.5 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150";
+                    }
+                }
+            });
+        }
+
+        function renderMovies(moviesList, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!moviesList || moviesList.length === 0) {
+                container.innerHTML = `<p class="text-zinc-500 text-xs text-center col-span-full py-10">No movies available yet.</p>`;
                 return;
             }
 
-            // Configure button click based on operating system
-            btnInstall.addEventListener('click', async () => {
-                if (isIOS()) {
-                    // Apple iOS Workaround trigger: Show the beautiful step-by-step overlay
-                    iosOverlay.classList.remove('hidden');
-                } else if (deferredPrompt) {
-                    // Android & Desktop: Trigger standard automatic browser prompt
-                    deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    console.log(`User response to install: ${outcome}`);
-                    deferredPrompt = null;
-                } else {
-                    alert("To install this app, please use your browser's options menu and choose 'Install' or 'Add to Home Screen'.");
-                }
+            container.innerHTML = moviesList.map((movie) => {
+                const thumb = movie.thumbnail_url || "apple-touch-icon.png";
+                const rentLabel = formatRentPrice(movie.rent_price);
+                const metaParts = [movie.genre, movie.language].filter(Boolean).join(" • ");
+                const safeId = encodeURIComponent(String(movie.id ?? ""));
+                const rentHref = movie.paychangu_link ? movie.paychangu_link : "#";
+                const rentAttrs = movie.paychangu_link
+                    ? `href="${rentHref}" target="_blank" rel="noopener noreferrer"`
+                    : `href="javascript:void(0)" onclick="openStreamModal('${safeId}')"`;
+
+                return `
+                    <article class="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                        <div>
+                            <div class="aspect-video w-full bg-zinc-900 overflow-hidden">
+                                <img src="${thumb}" alt="${movie.title || "Movie"}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 space-y-1.5">
+                                <h3 class="text-white text-sm font-bold leading-snug">${movie.title || "Untitled Film"}</h3>
+                                <p class="text-[11px] text-zinc-400">${metaParts || "XM Studio Release"}</p>
+                            </div>
+                        </div>
+
+                        <div class="px-4 pb-4 flex flex-wrap gap-2">
+                            <a ${rentAttrs}
+                               class="flex-1 text-center bg-[#FF3E1F] hover:bg-[#e23518] text-white text-xs font-bold py-2.5 px-3 rounded-xl transition">
+                                ${rentLabel}
+                            </a>
+                            ${movie.trailer_url ? `
+                                <a href="${movie.trailer_url}" target="_blank" rel="noopener noreferrer"
+                                   class="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                                    <i class="fa-brands fa-youtube text-[#FF3E1F] mr-1"></i>Trailer
+                                </a>
+                            ` : ""}
+                            <button onclick="openStreamModal('${safeId}')"
+                                    class="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+                                Watch
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function handleSearch(query) {
+            const q = query.trim().toLowerCase();
+            if (!q) {
+                renderMovies([], "search-results");
+                return;
+            }
+            const filtered = cachedMovies.filter((movie) => {
+                const title = (movie.title || "").toLowerCase();
+                const genre = (movie.genre || "").toLowerCase();
+                const lang = (movie.language || "").toLowerCase();
+                return title.includes(q) || genre.includes(q) || lang.includes(q);
             });
-        });
+            renderMovies(filtered, "search-results");
+        }
 
-        // Store the prompt event for Android & Chromium browsers
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Update button UI to look exciting
-            btnInstall.innerHTML = `<i class="fa-solid fa-square-plus"></i> Add to Home Screen`;
-        });
+        function openStreamModal(encodedId, prefillTxRef = "") {
+            const id = decodeURIComponent(encodedId);
+            const movie = cachedMovies.find((m) => String(m.id) === String(id)) || cachedMovies[0];
+            if (!movie) return;
 
-        // Track when the installation successfully finishes
-        window.addEventListener('appinstalled', (evt) => {
-            console.log('XM STUDIO App successfully installed.');
-            window.location.href = "/dashboard.html";
-        });
+            activeMovie = movie;
+            document.getElementById("player-movie-title").innerText = movie.title || "Now Streaming";
+            document.getElementById("tx-ref-input").value = prefillTxRef;
+            document.getElementById("player-status").innerText = "Enter a verified PayChangu transaction reference (tx_ref) to stream.";
+            const videoEl = document.getElementById("stream-video");
+            videoEl.pause();
+            videoEl.removeAttribute("src");
+            videoEl.load();
 
-        // Close Apple iOS popup overlay manual control
-        closeIos.addEventListener('click', () => {
-            iosOverlay.classList.add('hidden');
-        });
+            document.getElementById("player-modal").classList.remove("hidden");
+
+            if (prefillTxRef) {
+                startMovieStream(movie, prefillTxRef);
+            }
+        }
+
+        function closePlayerModal() {
+            const videoEl = document.getElementById("stream-video");
+            videoEl.pause();
+            videoEl.removeAttribute("src");
+            videoEl.load();
+            document.getElementById("player-modal").classList.add("hidden");
+        }
+
+        function loadStreamFromInput() {
+            const txRef = document.getElementById("tx-ref-input").value.trim();
+            if (!activeMovie) return;
+            if (!txRef) {
+                document.getElementById("player-status").innerText = "Please enter your tx_ref first.";
+                return;
+            }
+            startMovieStream(activeMovie, txRef);
+        }
+
+        function startMovieStream(movie, txRef) {
+            const videoEl = document.getElementById("stream-video");
+            const statusEl = document.getElementById("player-status");
+            const streamUrl = `${STREAM_WORKER_BASE}?movie_id=${encodeURIComponent(movie.id)}&tx_ref=${encodeURIComponent(txRef)}`;
+
+            statusEl.innerText = "Verifying payment and loading stream...";
+            videoEl.src = streamUrl;
+            videoEl.load();
+            videoEl.play().then(() => {
+                statusEl.innerText = "Stream unlocked.";
+            }).catch(() => {
+                statusEl.innerText = "Stream ready — press play if autoplay is blocked.";
+            });
+        }
+
+        async function loadCatalog() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from("movies")
+                    .select("id, title, genre, thumbnail_url, video_url, rent_price, language, trailer_url, paychangu_link");
+
+                if (error) throw error;
+                cachedMovies = data || [];
+                renderMovies(cachedMovies, "movie-catalog");
+
+                const params = new URLSearchParams(window.location.search);
+                const returnTxRef = params.get("tx_ref") || params.get("reference");
+                const returnMovieId = params.get("movie_id") || params.get("key");
+                if (returnTxRef && (returnMovieId || cachedMovies[0])) {
+                    openStreamModal(encodeURIComponent(returnMovieId || cachedMovies[0].id), returnTxRef);
+                }
+            } catch (err) {
+                console.error("Failed to load movies:", err);
+                document.getElementById("movie-catalog").innerHTML =
+                    `<p class="text-red-400 text-xs col-span-full text-center py-8">Could not load movies. Check Supabase public read policy on movies.</p>`;
+            }
+        }
+
+        function initApp() {
+            const supabaseLib = window.supabase || window.supabaseJS;
+            if (!supabaseLib) {
+                document.getElementById("movie-catalog").innerHTML =
+                    `<p class="text-red-400 text-xs col-span-full text-center py-8">Supabase library failed to load.</p>`;
+                return;
+            }
+            supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            loadCatalog();
+        }
+
+        initApp();
     </script>
 </body>
 </html>
