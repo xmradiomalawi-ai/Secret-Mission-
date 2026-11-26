@@ -4,130 +4,272 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XM STUDIO</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.0/dist/umd/supabase.js"></script>
-
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="icon" type="image/png" href="apple-touch-icon.png">
-
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background-color: #0c0c0e;
+            margin: 0;
+            padding: 32px 16px 64px;
+            background-color: #ffffff;
+            color: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .page-shell {
+            width: 100%;
+            max-width: 780px;
+            border: 2px solid #000000;
+            background-color: #ffffff;
+            padding: 24px 28px 40px;
+        }
+        .domain-pill {
+            display: block;
+            width: fit-content;
+            margin: 0 auto 18px;
+            padding: 6px 28px;
+            border: 1.5px solid #000000;
+            border-radius: 999px;
+            font-size: 13px;
+            color: #000000;
+            text-decoration: none;
+        }
+        .brand-title {
+            margin: 0 0 28px;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #000000;
+        }
+        .search-wrap {
+            max-width: 340px;
+            margin: 0 auto 28px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 9px 14px;
+            border: 1.5px solid #000000;
+            border-radius: 999px;
+            font-size: 13px;
+            color: #000000;
+            background: #ffffff;
+            outline: none;
+        }
+        .catalog-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 44px;
+        }
+        .movie-block {
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .poster-box {
+            width: 130px;
+            height: 175px;
+            border: 1px solid #d4d4d8;
+            background-color: #f4f4f5;
+            overflow: hidden;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .poster-fallback {
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #18181b;
+            line-height: 1.3;
+        }
+        .meta-lines {
+            font-size: 14px;
+            line-height: 1.65;
+            color: #000000;
+            margin-bottom: 14px;
+        }
+        .meta-lines p {
+            margin: 0;
+        }
+        .btn-stack {
+            width: 100%;
+            max-width: 185px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .pill-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 800;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s ease;
+        }
+        .pill-btn:hover {
+            opacity: 0.9;
+        }
+        .btn-trailer {
+            background-color: #ef2314;
+            color: #000000;
+        }
+        .btn-rent {
+            background-color: #6ce548;
+            color: #000000;
+        }
+        .btn-watch {
+            background-color: #000000;
             color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 7px 14px;
         }
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
+        .status-msg {
+            text-align: center;
+            font-size: 13px;
+            color: #3f3f46;
+            padding: 20px 0;
         }
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #0c0c0e;
+        .error-msg {
+            text-align: center;
+            font-size: 13px;
+            color: #b91c1c;
+            padding: 20px 0;
         }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 10px;
+
+        /* Watch Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            z-index: 50;
+        }
+        .modal-backdrop.open {
+            display: flex;
+        }
+        .modal-card {
+            width: 100%;
+            max-width: 560px;
+            background: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            padding: 20px;
+        }
+        .modal-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .modal-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .close-btn {
+            background: transparent;
+            border: 1px solid #000000;
+            color: #000000;
+            font-weight: 700;
+            padding: 4px 10px;
+            cursor: pointer;
+        }
+        .modal-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000000;
+            margin-bottom: 12px;
+        }
+        .tx-row {
+            display: flex;
+            gap: 8px;
+        }
+        .tx-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1.5px solid #000000;
+            font-size: 13px;
+        }
+        .tx-submit {
+            padding: 8px 14px;
+            background: #6ce548;
+            color: #000000;
+            border: 1.5px solid #000000;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .modal-status {
+            margin: 8px 0 0;
+            font-size: 12px;
+            color: #3f3f46;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between bg-[#0c0c0e] text-white">
+<body>
+    <div class="page-shell">
+        <div class="domain-pill" id="site-domain-pill">btvideo.pages.dev</div>
+        <h1 class="brand-title">XM STUDIO</h1>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-[#0c0c0e]/95 backdrop-blur px-6 py-4 flex items-center justify-between border-b border-zinc-900">
-        <span class="text-[#FF3E1F] font-black text-xl tracking-wider">XM STUDIO</span>
-        <div class="flex items-center gap-2">
-            <span class="text-zinc-500 text-[11px] font-medium">Pay &amp; Watch</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        </div>
-    </header>
-
-    <!-- Catalog View -->
-    <main id="view-home" class="px-6 py-6 flex-grow overflow-y-auto custom-scroll max-w-4xl mx-auto w-full pb-28">
-        <div id="movie-catalog" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="animate-pulse flex flex-col space-y-3">
-                <div class="aspect-video bg-zinc-900 rounded-2xl"></div>
-                <div class="h-4 bg-zinc-900 rounded w-2/3"></div>
-                <div class="h-3 bg-zinc-900 rounded w-1/3"></div>
-            </div>
-            <div class="animate-pulse flex flex-col space-y-3">
-                <div class="aspect-video bg-zinc-900 rounded-2xl"></div>
-                <div class="h-4 bg-zinc-900 rounded w-2/3"></div>
-                <div class="h-3 bg-zinc-900 rounded w-1/3"></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Search View -->
-    <main id="view-search" class="hidden px-6 py-6 flex-grow max-w-4xl mx-auto w-full pb-28">
-        <h2 class="text-xl font-bold text-white mb-4">Search Movies</h2>
-        <div class="relative mb-6">
+        <div class="search-wrap">
             <input
                 type="text"
                 id="search-input"
+                class="search-input"
+                placeholder="Search title, genre, or language..."
                 oninput="handleSearch(this.value)"
-                placeholder="Search by title, genre, or language..."
-                class="w-full bg-zinc-900 border border-zinc-800 text-white py-3 pl-11 pr-4 rounded-xl placeholder-zinc-500 focus:outline-none focus:border-[#FF3E1F] text-sm"
             >
-            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-zinc-500 text-sm"></i>
         </div>
-        <div id="search-results" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <p class="text-zinc-500 text-xs col-span-full text-center py-8">Type to search movies...</p>
-        </div>
-    </main>
 
-    <!-- Watch / Stream Modal -->
-    <div id="player-modal" class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
-        <div class="bg-zinc-950 border border-zinc-800 rounded-2xl max-w-2xl w-full p-5 space-y-4 shadow-2xl">
-            <div class="flex items-center justify-between">
-                <h3 id="player-movie-title" class="text-base font-bold text-white truncate">Now Streaming</h3>
-                <button onclick="closePlayerModal()" class="text-zinc-400 hover:text-white text-lg px-2 py-1">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <video id="stream-video" controls playsinline class="w-full aspect-video bg-black rounded-xl border border-zinc-900">
-                Your browser does not support video playback.
-            </video>
-
-            <div class="flex flex-col sm:flex-row gap-2 pt-1">
-                <input
-                    type="text"
-                    id="tx-ref-input"
-                    placeholder="Enter or paste PayChangu tx_ref to unlock stream..."
-                    class="flex-1 bg-zinc-900 border border-zinc-800 focus:border-[#FF3E1F] text-white text-xs px-3.5 py-2.5 rounded-xl focus:outline-none"
-                >
-                <button
-                    onclick="loadStreamFromInput()"
-                    class="bg-[#FF3E1F] hover:bg-[#e23518] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
-                >
-                    Unlock &amp; Play
-                </button>
-            </div>
-            <p id="player-status" class="text-[11px] text-zinc-400"></p>
+        <div id="movie-catalog" class="catalog-list">
+            <p class="status-msg">Loading catalog...</p>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0c0c0e] border-t border-zinc-900 py-3.5 px-6 z-40 flex justify-center items-center">
-        <div class="flex items-center justify-between w-full max-w-sm gap-3">
-            <button
-                id="nav-btn-home"
-                onclick="switchDashboardTab('home')"
-                class="flex-1 py-2.5 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150"
-            >
-                <i class="fa-solid fa-film text-base mr-2"></i>
-                <span class="text-xs font-bold">Catalog</span>
-            </button>
-
-            <button
-                id="nav-btn-search"
-                onclick="switchDashboardTab('search')"
-                class="flex-1 py-2.5 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150"
-            >
-                <i class="fa-solid fa-magnifying-glass text-base mr-2"></i>
-                <span class="text-xs font-bold">Search</span>
-            </button>
+    <!-- Stream Unlock Modal -->
+    <div id="player-modal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-top">
+                <h2 id="player-movie-title" class="modal-title">Watch Movie</h2>
+                <button type="button" class="close-btn" onclick="closePlayerModal()">Close</button>
+            </div>
+            <video id="stream-video" class="modal-video" controls playsinline></video>
+            <div class="tx-row">
+                <input
+                    type="text"
+                    id="tx-ref-input"
+                    class="tx-input"
+                    placeholder="Enter PayChangu tx_ref to play..."
+                >
+                <button type="button" class="tx-submit" onclick="loadStreamFromInput()">Play</button>
+            </div>
+            <p id="player-status" class="modal-status">Enter your PayChangu transaction reference (tx_ref) to unlock playback.</p>
         </div>
-    </nav>
+    </div>
 
     <script>
         const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co";
@@ -138,85 +280,68 @@
         let cachedMovies = [];
         let activeMovie = null;
 
-        function formatRentPrice(price) {
+        document.getElementById("site-domain-pill").textContent = window.location.host || "btvideo.pages.dev";
+
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;");
+        }
+
+        function formatRentButton(price) {
             if (price === null || price === undefined || price === "") {
-                return "Rent";
+                return "RENT";
             }
-            const numeric = Number(price);
-            if (!Number.isNaN(numeric)) {
-                return `Rent : $${numeric.toFixed(2)}`;
+            const num = Number(price);
+            if (!Number.isNaN(num)) {
+                return `RENT : $${num.toFixed(2)}`;
             }
-            return `Rent : ${price}`;
+            return `RENT : ${escapeHtml(price)}`;
         }
 
-        function switchDashboardTab(tabName) {
-            const tabs = ["home", "search"];
-            tabs.forEach((t) => {
-                const view = document.getElementById(`view-${t}`);
-                if (view) {
-                    view.classList.toggle("hidden", t !== tabName);
-                }
-
-                const btn = document.getElementById(`nav-btn-${t}`);
-                if (btn) {
-                    if (t === tabName) {
-                        btn.className = "flex-1 py-2.5 flex items-center justify-center rounded-xl bg-[#FF3E1F] text-white border border-[#FF3E1F] shadow-lg transition-all duration-150";
-                    } else {
-                        btn.className = "flex-1 py-2.5 flex items-center justify-center rounded-xl bg-transparent text-zinc-400 border border-zinc-800 hover:border-zinc-600 transition-all duration-150";
-                    }
-                }
-            });
-        }
-
-        function renderMovies(moviesList, containerId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-
+        function renderMovies(moviesList) {
+            const container = document.getElementById("movie-catalog");
             if (!moviesList || moviesList.length === 0) {
-                container.innerHTML = `<p class="text-zinc-500 text-xs text-center col-span-full py-10">No movies available yet.</p>`;
+                container.innerHTML = `<p class="status-msg">No movies found.</p>`;
                 return;
             }
 
             container.innerHTML = moviesList.map((movie) => {
-                const thumb = movie.thumbnail_url || "apple-touch-icon.png";
-                const rentLabel = formatRentPrice(movie.rent_price);
-                const genre = movie.Genre || "";
-                const language = movie.Language || "";
-                const trailerUrl = movie.Trailer || "";
-                const metaParts = [genre, language].filter(Boolean).join(" • ");
-                const safeId = encodeURIComponent(String(movie.id ?? ""));
-                const rentHref = movie.paychangu_link ? movie.paychangu_link : "#";
-                const rentAttrs = movie.paychangu_link
-                    ? `href="${rentHref}" target="_blank" rel="noopener noreferrer"`
-                    : `href="javascript:void(0)" onclick="openStreamModal('${safeId}')"`;
+                const title = escapeHtml(movie.title || "Untitled");
+                const genre = escapeHtml(movie.Genre || "-");
+                const language = escapeHtml(movie.Language || "-");
+                const rentText = formatRentButton(movie.rent_price);
+                const encodedId = encodeURIComponent(String(movie.id ?? ""));
+                const hasThumb = Boolean(movie.thumbnail_url && String(movie.thumbnail_url).trim());
+                const thumbUrl = hasThumb ? escapeHtml(String(movie.thumbnail_url).trim()) : "";
+
+                const trailerHtml = movie.Trailer
+                    ? `<a href="${escapeHtml(movie.Trailer)}" target="_blank" rel="noopener noreferrer" class="pill-btn btn-trailer">&#9654; TRAILER</a>`
+                    : `<button type="button" onclick="alert('No trailer link set for this movie yet.')" class="pill-btn btn-trailer">&#9654; TRAILER</button>`;
+
+                const rentHtml = movie.paychangu_link
+                    ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="pill-btn btn-rent">${rentText}</a>`
+                    : `<button type="button" onclick="openStreamModal('${encodedId}')" class="pill-btn btn-rent">${rentText}</button>`;
 
                 return `
-                    <article class="bg-zinc-950 border border-zinc-900 rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                        <div>
-                            <div class="aspect-video w-full bg-zinc-900 overflow-hidden">
-                                <img src="${thumb}" alt="${movie.title || "Movie"}" class="w-full h-full object-cover">
-                            </div>
-                            <div class="p-4 space-y-1.5">
-                                <h3 class="text-white text-sm font-bold leading-snug">${movie.title || "Untitled Film"}</h3>
-                                <p class="text-[11px] text-zinc-400">${metaParts || "XM Studio Release"}</p>
-                            </div>
+                    <article class="movie-block">
+                        <div class="poster-box">
+                            ${hasThumb
+                                ? `<img src="${thumbUrl}" alt="${title}" class="poster-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"><span class="poster-fallback" style="display:none;">${title}</span>`
+                                : `<span class="poster-fallback">${title}</span>`
+                            }
                         </div>
-
-                        <div class="px-4 pb-4 flex flex-wrap gap-2">
-                            <a ${rentAttrs}
-                               class="flex-1 text-center bg-[#FF3E1F] hover:bg-[#e23518] text-white text-xs font-bold py-2.5 px-3 rounded-xl transition">
-                                ${rentLabel}
-                            </a>
-                            ${trailerUrl ? `
-                                <a href="${trailerUrl}" target="_blank" rel="noopener noreferrer"
-                                   class="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition">
-                                    <i class="fa-brands fa-youtube text-[#FF3E1F] mr-1"></i>Trailer
-                                </a>
-                            ` : ""}
-                            <button onclick="openStreamModal('${safeId}')"
-                                    class="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition">
-                                Watch
-                            </button>
+                        <div class="meta-lines">
+                            <p>Title : ${title}</p>
+                            <p>Genre : ${genre}</p>
+                            <p>Language : ${language}</p>
+                        </div>
+                        <div class="btn-stack">
+                            ${trailerHtml}
+                            ${rentHtml}
+                            <button type="button" onclick="openStreamModal('${encodedId}')" class="pill-btn btn-watch">WATCH WITH tx_ref</button>
                         </div>
                     </article>
                 `;
@@ -226,16 +351,15 @@
         function handleSearch(query) {
             const q = query.trim().toLowerCase();
             if (!q) {
-                renderMovies([], "search-results");
+                renderMovies(cachedMovies);
                 return;
             }
-            const filtered = cachedMovies.filter((movie) => {
-                const title = (movie.title || "").toLowerCase();
-                const genre = (movie.Genre || "").toLowerCase();
-                const lang = (movie.Language || "").toLowerCase();
-                return title.includes(q) || genre.includes(q) || lang.includes(q);
-            });
-            renderMovies(filtered, "search-results");
+            const filtered = cachedMovies.filter((m) =>
+                (m.title || "").toLowerCase().includes(q) ||
+                (m.Genre || "").toLowerCase().includes(q) ||
+                (m.Language || "").toLowerCase().includes(q)
+            );
+            renderMovies(filtered);
         }
 
         function openStreamModal(encodedId, prefillTxRef = "") {
@@ -244,15 +368,16 @@
             if (!movie) return;
 
             activeMovie = movie;
-            document.getElementById("player-movie-title").innerText = movie.title || "Now Streaming";
+            document.getElementById("player-movie-title").textContent = movie.title || "Watch Movie";
             document.getElementById("tx-ref-input").value = prefillTxRef;
-            document.getElementById("player-status").innerText = "Enter a verified PayChangu transaction reference (tx_ref) to stream.";
+            document.getElementById("player-status").textContent = "Enter your PayChangu transaction reference (tx_ref) to unlock playback.";
+
             const videoEl = document.getElementById("stream-video");
             videoEl.pause();
             videoEl.removeAttribute("src");
             videoEl.load();
 
-            document.getElementById("player-modal").classList.remove("hidden");
+            document.getElementById("player-modal").classList.add("open");
 
             if (prefillTxRef) {
                 startMovieStream(movie, prefillTxRef);
@@ -264,14 +389,14 @@
             videoEl.pause();
             videoEl.removeAttribute("src");
             videoEl.load();
-            document.getElementById("player-modal").classList.add("hidden");
+            document.getElementById("player-modal").classList.remove("open");
         }
 
         function loadStreamFromInput() {
             const txRef = document.getElementById("tx-ref-input").value.trim();
             if (!activeMovie) return;
             if (!txRef) {
-                document.getElementById("player-status").innerText = "Please enter your tx_ref first.";
+                document.getElementById("player-status").textContent = "Please enter a tx_ref first.";
                 return;
             }
             startMovieStream(activeMovie, txRef);
@@ -282,13 +407,13 @@
             const statusEl = document.getElementById("player-status");
             const streamUrl = `${STREAM_WORKER_BASE}?movie_id=${encodeURIComponent(movie.id)}&tx_ref=${encodeURIComponent(txRef)}`;
 
-            statusEl.innerText = "Verifying payment and loading stream...";
+            statusEl.textContent = "Verifying payment and loading stream...";
             videoEl.src = streamUrl;
             videoEl.load();
             videoEl.play().then(() => {
-                statusEl.innerText = "Stream unlocked.";
+                statusEl.textContent = "Playback started.";
             }).catch(() => {
-                statusEl.innerText = "Stream ready — press play if autoplay is blocked.";
+                statusEl.textContent = "Stream ready — press play if needed.";
             });
         }
 
@@ -300,7 +425,7 @@
 
                 if (error) throw error;
                 cachedMovies = data || [];
-                renderMovies(cachedMovies, "movie-catalog");
+                renderMovies(cachedMovies);
 
                 const params = new URLSearchParams(window.location.search);
                 const returnTxRef = params.get("tx_ref") || params.get("reference");
@@ -311,7 +436,7 @@
             } catch (err) {
                 console.error("Failed to load movies:", err);
                 document.getElementById("movie-catalog").innerHTML =
-                    `<p class="text-red-400 text-xs col-span-full text-center py-8">Could not load movies. Check Supabase public read policy on movies.</p>`;
+                    `<p class="error-msg">Could not load movies. Check Supabase public read policy on movies.</p>`;
             }
         }
 
@@ -319,7 +444,7 @@
             const supabaseLib = window.supabase || window.supabaseJS;
             if (!supabaseLib) {
                 document.getElementById("movie-catalog").innerHTML =
-                    `<p class="text-red-400 text-xs col-span-full text-center py-8">Supabase library failed to load.</p>`;
+                    `<p class="error-msg">Supabase library failed to load.</p>`;
                 return;
             }
             supabaseClient = supabaseLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
