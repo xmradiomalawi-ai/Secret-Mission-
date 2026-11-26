@@ -180,7 +180,10 @@
             container.innerHTML = moviesList.map((movie) => {
                 const thumb = movie.thumbnail_url || "apple-touch-icon.png";
                 const rentLabel = formatRentPrice(movie.rent_price);
-                const metaParts = [movie.genre, movie.language].filter(Boolean).join(" • ");
+                const genre = movie.Genre || "";
+                const language = movie.Language || "";
+                const trailerUrl = movie.Trailer || "";
+                const metaParts = [genre, language].filter(Boolean).join(" • ");
                 const safeId = encodeURIComponent(String(movie.id ?? ""));
                 const rentHref = movie.paychangu_link ? movie.paychangu_link : "#";
                 const rentAttrs = movie.paychangu_link
@@ -204,8 +207,8 @@
                                class="flex-1 text-center bg-[#FF3E1F] hover:bg-[#e23518] text-white text-xs font-bold py-2.5 px-3 rounded-xl transition">
                                 ${rentLabel}
                             </a>
-                            ${movie.trailer_url ? `
-                                <a href="${movie.trailer_url}" target="_blank" rel="noopener noreferrer"
+                            ${trailerUrl ? `
+                                <a href="${trailerUrl}" target="_blank" rel="noopener noreferrer"
                                    class="bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-800 text-xs font-semibold py-2.5 px-3 rounded-xl transition">
                                     <i class="fa-brands fa-youtube text-[#FF3E1F] mr-1"></i>Trailer
                                 </a>
@@ -228,8 +231,8 @@
             }
             const filtered = cachedMovies.filter((movie) => {
                 const title = (movie.title || "").toLowerCase();
-                const genre = (movie.genre || "").toLowerCase();
-                const lang = (movie.language || "").toLowerCase();
+                const genre = (movie.Genre || "").toLowerCase();
+                const lang = (movie.Language || "").toLowerCase();
                 return title.includes(q) || genre.includes(q) || lang.includes(q);
             });
             renderMovies(filtered, "search-results");
@@ -293,7 +296,7 @@
             try {
                 const { data, error } = await supabaseClient
                     .from("movies")
-                    .select("id, title, genre, thumbnail_url, video_url, rent_price, language, trailer_url, paychangu_link");
+                    .select('id, title, "Genre", thumbnail_url, video_url, rent_price, "Language", "Trailer", paychangu_link');
 
                 if (error) throw error;
                 cachedMovies = data || [];
