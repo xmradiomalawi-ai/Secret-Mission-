@@ -1,480 +1,388 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="light">
-  <head>
-    <!-- Basic Meta Tags -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BT VIDEO — Rent Malawian Movies</title>
-    <meta
-      name="description"
-      content="Watch trailers, rent movies via PayChangu, and stream directly on BT VIDEO."
-    />
-    <meta name="robots" content="index, follow" />
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="BT VIDEO — Rent Malawian Movies" />
-    <meta
-      property="og:description"
-      content="Watch trailers, rent movies via PayChangu, and stream directly on BT VIDEO."
-    />
-    <meta property="og:type" content="website" />
-    <!-- Twitter Card Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BT VIDEO — Rent Malawian Movies" />
-    <meta
-      name="twitter:description"
-      content="Watch trailers, rent movies via PayChangu, and stream directly on BT VIDEO."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600&amp;display=swap"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.0/dist/umd/supabase.js"></script>
-    <!-- Swebsy color mode bootstrap -->
-    <style>
-      html.light {
-        background: #ffffff;
-        color: #1f2937;
-        color-scheme: light;
-      }
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BT VIDEO — Rent Malawian Movies</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.44.0/dist/umd/supabase.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-      html.dark {
-        background: #030712;
-        color: #f3f4f6;
-        color-scheme: dark;
-      }
+    body {
+      margin: 0;
+      padding: 32px 16px 64px;
+      background-color: #ffffff;
+      color: #111827;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-      .bt-toolbar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 28px;
-      }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
 
-      .bt-search {
-        width: 100%;
-        max-width: 320px;
-        padding: 9px 14px;
-        border: 1px solid currentColor;
-        border-radius: 6px;
-        background: transparent;
-        color: inherit;
-        font-size: 0.9rem;
-      }
+    .header {
+      margin-bottom: 28px;
+    }
 
-      .bt-actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 12px;
-      }
+    .header h1 {
+      margin: 0 0 6px;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
 
-      .bt-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        border: 1px solid currentColor;
-      }
+    .header p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
 
-      .bt-btn-rent {
-        background: #16a34a;
-        border-color: #16a34a;
-        color: #ffffff;
-      }
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 24px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
-      .bt-btn-trailer {
-        background: #dc2626;
-        border-color: #dc2626;
-        color: #ffffff;
-      }
+    .movie-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 12px;
+      background: #ffffff;
+    }
 
-      .bt-btn-watch {
-        background: transparent;
-        color: inherit;
-      }
+    .poster-frame {
+      width: 100%;
+      aspect-ratio: 2 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #f3f4f6;
+      margin-bottom: 12px;
+      position: relative;
+    }
 
-      .bt-poster-fallback {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px;
-        text-align: center;
-        font-size: 0.875rem;
-        font-weight: 600;
-      }
+    .poster-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
 
-      .bt-modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.75);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-        z-index: 50;
-      }
+    .poster-fallback {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #111827;
+    }
 
-      .bt-modal-backdrop.open {
-        display: flex;
-      }
+    .movie-title {
+      margin: 0 0 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #111827;
+    }
 
-      .bt-modal-box {
-        width: 100%;
-        max-width: 560px;
-        background: #ffffff;
-        color: #111827;
-        border: 2px solid #111827;
-        padding: 20px;
-      }
-    </style>
-    <script>
-      (function () {
-        var storageKey = "swebsy:color-mode";
-        var defaultMode = "light";
-        var root = document.documentElement;
-        function normalize(mode) {
-          return mode === "light" || mode === "dark" || mode === "system"
-            ? mode
-            : null;
-        }
-        function readStoredMode() {
-          try {
-            return normalize(
-              window.localStorage && window.localStorage.getItem(storageKey),
-            );
-          } catch (_) {
-            return null;
-          }
-        }
-        function systemMode() {
-          return window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
-        }
-        function resolve(mode) {
-          return mode === "system" ? systemMode() : mode;
-        }
-        var resolved = resolve(readStoredMode() || defaultMode);
-        root.classList.remove("light", "dark");
-        root.classList.add(resolved);
-        root.style.colorScheme = resolved;
-      })();
-    </script>
-    <!-- CSS Link -->
-    <link rel="stylesheet" href="./css/main-home.css" />
-  </head>
+    .movie-meta {
+      margin: 0 0 6px;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
 
-  <body>
-    <section
-      id="sets"
-      data-swebsy-block-id="priced-rail"
-      data-swebsy-block='{"tags":["gallery","pricing"],"description":"A mid-grey band of six tall photo frames, each captioned with its name, a large serif total, the parts it adds up from and the time.","title":"Six priced work frames"}'
-      class="rail-band py-16 md:py-24"
-    >
-      <div
-        data-animate-trigger="scroll"
-        class="container mx-auto max-w-7xl px-4 md:px-8 animate-soft-reveal-up"
-      >
-        <h2
-          class="font-serif text-[2.25rem] md:text-[3.25rem] leading-[1] tracking-[-0.015em] mb-3"
-          id="i8ggb"
-        >
-          BT VIDEO
-        </h2>
-        <p
-          class="text-[1rem] leading-[1.5] text-default mb-6 max-w-[34rem]"
-          id="iqihi"
-        >
-          Rent Malawian Movies
-        </p>
+    .movie-price {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #111827;
+    }
 
-        <div class="bt-toolbar">
-          <input
-            type="search"
-            id="movie-search"
-            class="bt-search"
-            placeholder="Search by title, genre, or language..."
-            oninput="handleMovieSearch(this.value)"
-          />
-          <span id="catalog-status" class="text-sm text-muted">Loading movies...</span>
-        </div>
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-        <ul
-          id="movie-grid"
-          class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-x-4 gap-y-12 xl:gap-x-5 list-none p-0 m-0"
-        ></ul>
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-rent {
+      background-color: #16a34a;
+      color: #ffffff;
+    }
+
+    .btn-trailer {
+      background-color: #dc2626;
+      color: #ffffff;
+    }
+
+    .btn-disabled {
+      background-color: #e5e7eb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: #4b5563;
+      padding: 16px 0;
+    }
+
+    .error-text {
+      font-size: 0.9rem;
+      color: #b91c1c;
+      padding: 16px 0;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 560px;
+      background: #ffffff;
+      color: #111827;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .close-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .modal-video {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000000;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .modal-status {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>BT VIDEO</h1>
+      <p>Rent Malawian Movies</p>
+    </header>
+
+    <ul id="movie-grid" class="movie-grid">
+      <li class="status-text">Loading movies...</li>
+    </ul>
+  </div>
+
+  <!-- Protected Stream Modal (triggered when returning with ?tx_ref=...) -->
+  <div id="stream-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="stream-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="stream-modal-title" class="modal-title">Now Playing</h2>
+        <button type="button" class="close-btn" onclick="closeStreamModal()">Close</button>
       </div>
-    </section>
-
-    <!-- Protected Stream Modal -->
-    <div id="stream-modal" class="bt-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="stream-modal-title">
-      <div class="bt-modal-box">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">
-          <h3 id="stream-modal-title" style="margin:0;font-size:1.125rem;font-weight:700;">Watch Movie</h3>
-          <button type="button" onclick="closeStreamModal()" class="bt-btn bt-btn-watch">Close</button>
-        </div>
-
-        <video
-          id="stream-player"
-          controls
-          playsinline
-          style="width:100%;aspect-ratio:16/9;background:#000000;margin-bottom:12px;"
-        ></video>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <input
-            type="text"
-            id="tx-ref-input"
-            placeholder="Enter PayChangu tx_ref to stream..."
-            style="flex:1;min-width:200px;padding:8px 12px;border:1px solid #111827;border-radius:6px;font-size:0.875rem;"
-          />
-          <button type="button" onclick="unlockAndPlayStream()" class="bt-btn bt-btn-rent">Play Stream</button>
-        </div>
-
-        <p id="stream-status" style="margin:10px 0 0;font-size:0.8125rem;color:#4b5563;">
-          Enter a verified PayChangu transaction reference (tx_ref) to stream this movie.
-        </p>
-      </div>
+      <video id="stream-player" class="modal-video" controls playsinline></video>
+      <p id="stream-status" class="modal-status">Verifying payment...</p>
     </div>
+  </div>
 
-    <script>
-      const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co";
-      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo";
-      const STREAM_ENDPOINT = "https://paychangu-webhook.xmradiomalawi.workers.dev/stream";
+  <script>
+    const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo";
+    const STREAM_ENDPOINT = "https://paychangu-webhook.xmradiomalawi.workers.dev/stream";
 
-      let supabaseClient = null;
-      let moviesCache = [];
-      let selectedMovie = null;
+    let supabaseClient = null;
+    let moviesCache = [];
 
-      function escapeHtml(str) {
-        return String(str ?? "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatRentPrice(price) {
+      if (price === null || price === undefined || price === "") {
+        return "Rent";
+      }
+      const num = Number(price);
+      if (!Number.isNaN(num)) {
+        return `Rent : $${num.toFixed(2)}`;
+      }
+      return `Rent : ${escapeHtml(price)}`;
+    }
+
+    function renderMovies(items) {
+      const grid = document.getElementById("movie-grid");
+
+      if (!items || items.length === 0) {
+        grid.innerHTML = `<li class="status-text">No movies available yet.</li>`;
+        return;
       }
 
-      function formatPrice(price) {
-        if (price === null || price === undefined || price === "") {
-          return "Rent";
-        }
-        const amount = Number(price);
-        if (!Number.isNaN(amount)) {
-          return `$${amount.toFixed(2)}`;
-        }
-        return escapeHtml(price);
-      }
+      grid.innerHTML = items.map((movie) => {
+        const title = escapeHtml(movie.title || "Untitled");
+        const genre = escapeHtml(movie.Genre || "");
+        const language = escapeHtml(movie.Language || "");
+        const metaText = [genre, language].filter(Boolean).join(" • ") || "Film";
+        const rentLabel = formatRentPrice(movie.rent_price);
+        const hasThumb = Boolean(movie.thumbnail_url && String(movie.thumbnail_url).trim());
+        const thumbUrl = hasThumb ? escapeHtml(String(movie.thumbnail_url).trim()) : "";
 
-      function renderMovieCards(items) {
-        const grid = document.getElementById("movie-grid");
-        const status = document.getElementById("catalog-status");
+        const rentButton = movie.paychangu_link
+          ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent">${rentLabel}</a>`
+          : `<span class="action-btn btn-disabled">${rentLabel}</span>`;
 
-        if (!items || items.length === 0) {
-          grid.innerHTML = `<li style="grid-column:1/-1;" class="text-sm text-muted">No matching movies found.</li>`;
-          status.textContent = "0 movies";
-          return;
-        }
+        const trailerButton = movie.Trailer
+          ? `<a href="${escapeHtml(movie.Trailer)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-trailer">&#9654; Trailer</a>`
+          : `<span class="action-btn btn-disabled">&#9654; Trailer</span>`;
 
-        status.textContent = `${items.length} ${items.length === 1 ? "movie" : "movies"}`;
-
-        grid.innerHTML = items.map((movie) => {
-          const title = escapeHtml(movie.title || "Untitled");
-          const genre = escapeHtml(movie.Genre || "General");
-          const language = escapeHtml(movie.Language || "N/A");
-          const priceLabel = formatPrice(movie.rent_price);
-          const encodedId = encodeURIComponent(String(movie.id ?? ""));
-          const hasThumb = Boolean(movie.thumbnail_url && String(movie.thumbnail_url).trim());
-          const thumbUrl = hasThumb ? escapeHtml(String(movie.thumbnail_url).trim()) : "";
-
-          const rentAction = movie.paychangu_link
-            ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="bt-btn bt-btn-rent">Rent</a>`
-            : `<button type="button" onclick="openStreamModal('${encodedId}')" class="bt-btn bt-btn-rent">Rent</button>`;
-
-          const trailerAction = movie.Trailer
-            ? `<a href="${escapeHtml(movie.Trailer)}" target="_blank" rel="noopener noreferrer" class="bt-btn bt-btn-trailer">&#9654; Trailer</a>`
-            : "";
-
-          return `
-            <li class="flex flex-col">
-              <div class="frame block aspect-[2/3] overflow-hidden" style="background:#f3f4f6;">
+        return `
+          <li class="movie-card">
+            <div>
+              <div class="poster-frame">
                 ${hasThumb
-                  ? `<img alt="${title}" src="${thumbUrl}" loading="lazy" class="w-full h-full object-cover object-center" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" /><div class="bt-poster-fallback" style="display:none;">${title}</div>`
-                  : `<div class="bt-poster-fallback">${title}</div>`
+                  ? `<img src="${thumbUrl}" alt="${title}" class="poster-img" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" /><div class="poster-fallback" style="display:none;">${title}</div>`
+                  : `<div class="poster-fallback">${title}</div>`
                 }
               </div>
+              <h2 class="movie-title">${title}</h2>
+              <p class="movie-meta">${metaText}</p>
+              <p class="movie-price">${rentLabel}</p>
+            </div>
+            <div class="card-actions">
+              ${rentButton}
+              ${trailerButton}
+            </div>
+          </li>
+        `;
+      }).join("");
+    }
 
-              <div class="flex items-start justify-between gap-3 mt-3">
-                <div class="min-w-0">
-                  <h3 class="font-serif text-[1.125rem] md:text-[1.25rem] leading-[1.1] tracking-[-0.01em] mb-0">
-                    ${title}
-                  </h3>
-                  <p class="text-[0.8125rem] leading-[1.45] text-muted tabular-nums mt-1.5 mb-0">
-                    ${genre} &bull; ${language}
-                  </p>
-                </div>
-                <div class="shrink-0 text-end">
-                  <p class="font-serif text-[1.375rem] md:text-[1.5rem] leading-none text-emphasis tabular-nums mb-0">
-                    ${priceLabel}
-                  </p>
-                </div>
-              </div>
+    function openStreamModal(movie, txRef) {
+      if (!movie || !txRef) return;
+      document.getElementById("stream-modal-title").textContent = movie.title || "Now Playing";
+      const statusEl = document.getElementById("stream-status");
+      const player = document.getElementById("stream-player");
+      const url = `${STREAM_ENDPOINT}?movie_id=${encodeURIComponent(movie.id)}&tx_ref=${encodeURIComponent(txRef)}`;
 
-              <div class="bt-actions">
-                ${rentAction}
-                ${trailerAction}
-                <button type="button" onclick="openStreamModal('${encodedId}')" class="bt-btn bt-btn-watch">Watch</button>
-              </div>
-            </li>
-          `;
-        }).join("");
-      }
+      statusEl.textContent = "Verifying payment and loading stream...";
+      player.src = url;
+      player.load();
+      document.getElementById("stream-modal").classList.add("open");
 
-      function handleMovieSearch(query) {
-        const q = String(query || "").trim().toLowerCase();
-        if (!q) {
-          renderMovieCards(moviesCache);
-          return;
-        }
-        const filtered = moviesCache.filter((m) =>
-          (m.title || "").toLowerCase().includes(q) ||
-          (m.Genre || "").toLowerCase().includes(q) ||
-          (m.Language || "").toLowerCase().includes(q)
-        );
-        renderMovieCards(filtered);
-      }
+      player.play().then(() => {
+        statusEl.textContent = "Playing stream.";
+      }).catch(() => {
+        statusEl.textContent = "Stream ready — press play to start.";
+      });
+    }
 
-      function openStreamModal(encodedId, prefillTxRef = "") {
-        const id = decodeURIComponent(encodedId);
-        const movie = moviesCache.find((m) => String(m.id) === String(id)) || moviesCache[0];
-        if (!movie) return;
+    function closeStreamModal() {
+      const player = document.getElementById("stream-player");
+      player.pause();
+      player.removeAttribute("src");
+      player.load();
+      document.getElementById("stream-modal").classList.remove("open");
+    }
 
-        selectedMovie = movie;
-        document.getElementById("stream-modal-title").textContent = movie.title || "Watch Movie";
-        document.getElementById("tx-ref-input").value = prefillTxRef;
-        document.getElementById("stream-status").textContent = "Enter a verified PayChangu transaction reference (tx_ref) to stream.";
+    async function loadCatalog() {
+      const grid = document.getElementById("movie-grid");
 
-        const player = document.getElementById("stream-player");
-        player.pause();
-        player.removeAttribute("src");
-        player.load();
+      try {
+        const lib = window.supabase || window.supabaseJS;
+        if (!lib) throw new Error("Supabase SDK failed to load.");
 
-        document.getElementById("stream-modal").classList.add("open");
+        supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        if (prefillTxRef) {
-          startStream(movie, prefillTxRef);
-        }
-      }
+        const { data, error } = await supabaseClient
+          .from("movies")
+          .select('id, title, "Genre", thumbnail_url, video_url, rent_price, "Language", "Trailer", paychangu_link');
 
-      function closeStreamModal() {
-        const player = document.getElementById("stream-player");
-        player.pause();
-        player.removeAttribute("src");
-        player.load();
-        document.getElementById("stream-modal").classList.remove("open");
-      }
+        if (error) throw error;
 
-      function unlockAndPlayStream() {
-        const txRef = document.getElementById("tx-ref-input").value.trim();
-        if (!selectedMovie) return;
-        if (!txRef) {
-          document.getElementById("stream-status").textContent = "Please enter your tx_ref first.";
-          return;
-        }
-        startStream(selectedMovie, txRef);
-      }
+        moviesCache = data || [];
+        renderMovies(moviesCache);
 
-      function startStream(movie, txRef) {
-        const player = document.getElementById("stream-player");
-        const statusEl = document.getElementById("stream-status");
-        const url = `${STREAM_ENDPOINT}?movie_id=${encodeURIComponent(movie.id)}&tx_ref=${encodeURIComponent(txRef)}`;
-
-        statusEl.textContent = "Verifying payment and loading stream...";
-        player.src = url;
-        player.load();
-        player.play().then(() => {
-          statusEl.textContent = "Playing stream.";
-        }).catch(() => {
-          statusEl.textContent = "Stream ready — press play if needed.";
-        });
-      }
-
-      async function loadMoviesFromSupabase() {
-        const grid = document.getElementById("movie-grid");
-        const status = document.getElementById("catalog-status");
-
-        try {
-          const lib = window.supabase || window.supabaseJS;
-          if (!lib) throw new Error("Supabase client script did not load.");
-
-          supabaseClient = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-          const { data, error } = await supabaseClient
-            .from("movies")
-            .select('id, title, "Genre", thumbnail_url, video_url, rent_price, "Language", "Trailer", paychangu_link');
-
-          if (error) throw error;
-
-          moviesCache = data || [];
-          renderMovieCards(moviesCache);
-
-          const params = new URLSearchParams(window.location.search);
-          const returnTxRef = params.get("tx_ref") || params.get("reference");
-          const returnMovieId = params.get("movie_id") || params.get("key");
-          if (returnTxRef && (returnMovieId || moviesCache[0])) {
-            openStreamModal(encodeURIComponent(returnMovieId || moviesCache[0].id), returnTxRef);
+        const params = new URLSearchParams(window.location.search);
+        const returnTxRef = params.get("tx_ref") || params.get("reference");
+        const returnMovieId = params.get("movie_id") || params.get("key");
+        if (returnTxRef && moviesCache.length > 0) {
+          const matched = returnMovieId
+            ? moviesCache.find((m) => String(m.id) === String(returnMovieId) || String(m.title) === String(returnMovieId))
+            : moviesCache[0];
+          if (matched) {
+            openStreamModal(matched, returnTxRef);
           }
-        } catch (err) {
-          console.error("Error loading movies:", err);
-          status.textContent = "Error loading catalog";
-          grid.innerHTML = `<li style="grid-column:1/-1;color:#b91c1c;" class="text-sm">Could not load movies from Supabase. Check public SELECT policy on movies.</li>`;
         }
+      } catch (err) {
+        console.error("Failed to load movies:", err);
+        grid.innerHTML = `<li class="error-text">Could not load movies. Check Supabase public read policy on movies.</li>`;
       }
+    }
 
-      loadMoviesFromSupabase();
-    </script>
-  </body>
-  <!-- Scroll Animation Observer -->
-  <script src="js/swebsy-scroll-observer.js"></script>
-  <noscript
-    ><style>
-      [data-animate-trigger] {
-        opacity: 1 !important;
-        animation: none !important;
-      }
-    </style></noscript
-  >
-
-  <!-- Swebsy Branding -->
-  <a
-    href="https://swebsy.com?utm_source=badge&utm_medium=referral"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="swebsy-badge"
-    aria-label="Made with Swebsy"
-  >
-    <svg
-      class="swebsy-badge-mark"
-      width="14"
-      height="14"
-      viewBox="0 0 128 128"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path class="swebsy-badge-mark-outer" d="M128 64L0 0L0 128L128 64Z" />
-      <path class="swebsy-badge-mark-inner" d="M75 63.5L26 39L26 88L75 63.5Z" />
-    </svg>
-    <span class="swebsy-badge-text">Swebsy</span>
-  </a>
+    loadCatalog();
+  </script>
+</body>
 </html>
