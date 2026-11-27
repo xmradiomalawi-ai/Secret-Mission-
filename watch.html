@@ -36,8 +36,8 @@
     const statusText = document.getElementById("status");
 
     if (!movieId || !txRef) {
-      statusText.textContent = "Missing payment or movie details. Please contact BT VIDEO.";
-    } else {
+  statusText.textContent = "";
+} else {
       player.addEventListener("loadedmetadata", () => {
         statusText.textContent = "Press play to watch.";
       });
