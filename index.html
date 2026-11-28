@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -232,7 +233,7 @@
     </ul>
   </div>
 
-  <!-- Protected Stream Modal (triggered when returning with ?tx_ref=...) -->
+  <!-- Protected Stream Modal -->
   <div id="stream-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="stream-modal-title">
     <div class="modal-card">
       <div class="modal-header">
@@ -247,7 +248,10 @@
   <script>
     const SUPABASE_URL = "https://aqyypmswkyffnpsmqfwm.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxeXlwbXN3a3lmZm5wc21xZndtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNDQ1MDUsImV4cCI6MjA5ODkyMDUwNX0.-0BF0z0l2aLF4nLc5qUWlAV7ypfwlGnMAtnX3--rEKo";
-    const STREAM_ENDPOINT = "https://paychangu-webhook.xmradiomalawi.workers.dev/stream";
+
+    const WORKER_BASE_URL = "https://paychangu-webhook.xmradiomalawi.workers.dev";
+    const STREAM_ENDPOINT = `${WORKER_BASE_URL}/stream`;
+    const TEST_CHECKOUT_ENDPOINT = `${WORKER_BASE_URL}/create-test-checkout`;
 
     let supabaseClient = null;
     let moviesCache = [];
@@ -282,6 +286,37 @@
       return `RENT MWK : ${escapeHtml(price)}`;
     }
 
+    async function startTestCheckout(movieId) {
+      if (!movieId) {
+        alert("Movie information is missing.");
+        return;
+      }
+
+      try {
+        const response = await fetch(TEST_CHECKOUT_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            movie_id: movieId
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.checkout_url) {
+          throw new Error(result.error || result.message || "Could not start the test payment.");
+        }
+
+        window.location.href = result.checkout_url;
+
+      } catch (error) {
+        console.error("Test checkout error:", error);
+        alert(error.message || "Unable to start payment. Please try again.");
+      }
+    }
+
     function renderMovies(items) {
       const grid = document.getElementById("movie-grid");
 
@@ -306,8 +341,10 @@
           ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent-usd">${usdLabel}</a>`
           : `<span class="action-btn btn-disabled">${usdLabel}</span>`;
 
-        const mwkButton = movie.paychangu_link_mwk
-          ? `<a href="${escapeHtml(movie.paychangu_link_mwk)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent-mwk">${mwkLabel}</a>`
+        const hasMwkPrice = Number(movie.rent_price_mwk) > 0;
+
+        const mwkButton = movie.id && hasMwkPrice
+          ? `<button type="button" onclick="startTestCheckout('${escapeHtml(movie.id)}')" class="action-btn btn-rent-mwk">${mwkLabel}</button>`
           : `<span class="action-btn btn-disabled">${mwkLabel}</span>`;
 
         const trailerButton = movie.Trailer
@@ -336,16 +373,26 @@
       }).join("");
     }
 
-    function openStreamModal(movie, txRef) {
+    function openStreamModal(movie, txRef, paymentMode = "live") {
       if (!movie || !txRef) return;
+
       document.getElementById("stream-modal-title").textContent = movie.title || "Now Playing";
+
       const statusEl = document.getElementById("stream-status");
       const player = document.getElementById("stream-player");
-      const url = `${STREAM_ENDPOINT}?movie_id=${encodeURIComponent(movie.id)}&tx_ref=${encodeURIComponent(txRef)}`;
+
+      const streamUrl = new URL(STREAM_ENDPOINT);
+      streamUrl.searchParams.set("movie_id", movie.id);
+      streamUrl.searchParams.set("tx_ref", txRef);
+
+      if (paymentMode === "test") {
+        streamUrl.searchParams.set("payment_mode", "test");
+      }
 
       statusEl.textContent = "Verifying payment and loading stream...";
-      player.src = url;
+      player.src = streamUrl.toString();
       player.load();
+
       document.getElementById("stream-modal").classList.add("open");
 
       player.play().then(() => {
@@ -353,6 +400,10 @@
       }).catch(() => {
         statusEl.textContent = "Stream ready — press play to start.";
       });
+
+      player.addEventListener("error", () => {
+        statusEl.textContent = "Unable to load the film. Payment verification may have failed.";
+      }, { once: true });
     }
 
     function closeStreamModal() {
@@ -382,16 +433,27 @@
         renderMovies(moviesCache);
 
         const params = new URLSearchParams(window.location.search);
+
         const returnTxRef = params.get("tx_ref") || params.get("reference");
         const returnMovieId = params.get("movie_id") || params.get("key");
+        const paymentMode = params.get("payment_mode") || "live";
+        const returnStatus = (params.get("status") || "").toLowerCase();
+
+        if (paymentMode === "test" && returnStatus && !["success", "successful"].includes(returnStatus)) {
+          alert("The test payment was not completed. No film has been unlocked.");
+          return;
+        }
+
         if (returnTxRef && moviesCache.length > 0) {
           const matched = returnMovieId
             ? moviesCache.find((m) => String(m.id) === String(returnMovieId) || String(m.title) === String(returnMovieId))
             : moviesCache[0];
+
           if (matched) {
-            openStreamModal(matched, returnTxRef);
+            openStreamModal(matched, returnTxRef, paymentMode);
           }
         }
+
       } catch (err) {
         console.error("Failed to load movies:", err);
         grid.innerHTML = `<li class="error-text">Could not load movies. Check Supabase public read policy on movies.</li>`;
