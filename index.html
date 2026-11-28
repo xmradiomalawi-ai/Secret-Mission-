@@ -277,7 +277,7 @@
       }
       const num = Number(price);
       if (!Number.isNaN(num)) {
-        return `RENT MWK : MK${num.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+        return `RENT MWK : K${num.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
       }
       return `RENT MWK : ${escapeHtml(price)}`;
     }
