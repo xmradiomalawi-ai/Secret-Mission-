@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,25 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BT VIDEO — Watch</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 24px 16px;
+      background-color: #ffffff;
+      color: #111827;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      text-align: center;
+    }
+    .watch-shell {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin: 0 0 16px;
+      text-align: left;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-link {
+      color: inherit;
+      text-decoration: none;
+    }
+    .brand-link:hover {
+      opacity: 0.8;
     }
     video {
+      display: block;
       width: 100%;
       max-width: 800px;
       aspect-ratio: 16 / 9;
       background: #000;
       border-radius: 8px;
+      margin: 0 auto;
+    }
+    #status {
+      margin: 12px 0 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #4b5563;
     }
   </style>
 </head>
 <body>
-  <h1>BT VIDEO</h1>
-  <video id="player" controls playsinline controlsList="nodownload" oncontextmenu="return false;"></video>
-  <p id="status">Checking your payment...</p>
+  <div class="watch-shell">
+    <h1><a href="./" class="brand-link">BT VIDEO</a></h1>
+    <video id="player" controls playsinline controlsList="nodownload" oncontextmenu="return false;"></video>
+    <p id="status">Checking your payment...</p>
+  </div>
 
   <script>
     const STREAM_ENDPOINT = "https://paychangu-webhook.xmradiomalawi.workers.dev/stream";
@@ -36,8 +68,8 @@
     const statusText = document.getElementById("status");
 
     if (!movieId || !txRef) {
-  statusText.textContent = "";
-} else {
+      statusText.textContent = "";
+    } else {
       player.addEventListener("loadedmetadata", () => {
         statusText.textContent = "Press play to watch.";
       });
