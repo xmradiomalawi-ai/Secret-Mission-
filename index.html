@@ -123,8 +123,13 @@
       cursor: pointer;
     }
 
-    .btn-rent {
+    .btn-rent-usd {
       background-color: #16a34a;
+      color: #ffffff;
+    }
+
+    .btn-rent-mwk {
+      background-color: #111827;
       color: #ffffff;
     }
 
@@ -255,15 +260,26 @@
         .replace(/"/g, "&quot;");
     }
 
-    function formatRentPrice(price) {
+    function formatUsdButton(price) {
       if (price === null || price === undefined || price === "") {
-        return "Rent";
+        return "RENT USD";
       }
       const num = Number(price);
       if (!Number.isNaN(num)) {
-        return `Rent : $${num.toFixed(2)}`;
+        return `RENT USD : $${num.toFixed(2)}`;
       }
-      return `Rent : ${escapeHtml(price)}`;
+      return `RENT USD : ${escapeHtml(price)}`;
+    }
+
+    function formatMwkButton(price) {
+      if (price === null || price === undefined || price === "") {
+        return "RENT MWK";
+      }
+      const num = Number(price);
+      if (!Number.isNaN(num)) {
+        return `RENT MWK : MK${num.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+      }
+      return `RENT MWK : ${escapeHtml(price)}`;
     }
 
     function renderMovies(items) {
@@ -279,13 +295,20 @@
         const genre = escapeHtml(movie.Genre || "");
         const language = escapeHtml(movie.Language || "");
         const metaText = [genre, language].filter(Boolean).join(" • ") || "Film";
-        const rentLabel = formatRentPrice(movie.rent_price);
+
+        const usdLabel = formatUsdButton(movie.rent_price);
+        const mwkLabel = formatMwkButton(movie.rent_price_mwk);
+
         const hasThumb = Boolean(movie.thumbnail_url && String(movie.thumbnail_url).trim());
         const thumbUrl = hasThumb ? escapeHtml(String(movie.thumbnail_url).trim()) : "";
 
-        const rentButton = movie.paychangu_link
-          ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent">${rentLabel}</a>`
-          : `<span class="action-btn btn-disabled">${rentLabel}</span>`;
+        const usdButton = movie.paychangu_link
+          ? `<a href="${escapeHtml(movie.paychangu_link)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent-usd">${usdLabel}</a>`
+          : `<span class="action-btn btn-disabled">${usdLabel}</span>`;
+
+        const mwkButton = movie.paychangu_link_mwk
+          ? `<a href="${escapeHtml(movie.paychangu_link_mwk)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-rent-mwk">${mwkLabel}</a>`
+          : `<span class="action-btn btn-disabled">${mwkLabel}</span>`;
 
         const trailerButton = movie.Trailer
           ? `<a href="${escapeHtml(movie.Trailer)}" target="_blank" rel="noopener noreferrer" class="action-btn btn-trailer">&#9654; Trailer</a>`
@@ -304,7 +327,8 @@
               <p class="movie-meta">${metaText}</p>
             </div>
             <div class="card-actions">
-              ${rentButton}
+              ${usdButton}
+              ${mwkButton}
               ${trailerButton}
             </div>
           </li>
@@ -350,7 +374,7 @@
 
         const { data, error } = await supabaseClient
           .from("movies")
-          .select('id, title, "Genre", thumbnail_url, video_url, rent_price, "Language", "Trailer", paychangu_link');
+          .select('id, title, "Genre", thumbnail_url, video_url, rent_price, rent_price_mwk, "Language", "Trailer", paychangu_link, paychangu_link_mwk');
 
         if (error) throw error;
 
